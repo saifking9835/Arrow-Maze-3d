@@ -14,7 +14,7 @@
         }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f7f9fc;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -26,76 +26,87 @@
         h1 {
             color: #2c3e50;
             margin-bottom: 5px;
+            font-size: 28px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
         
-        /* Hearts/Life Display */
         #lives-container {
             display: flex;
             gap: 5px;
-            font-size: 22px;
+            font-size: 24px;
             margin-bottom: 10px;
-            height: 30px;
+            height: 32px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
+        /* Standard Premium Controls Row */
         .controls-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
             width: 360px;
-            padding: 0 15px;
+            padding: 0 10px;
             margin-bottom: 15px;
         }
         #level-indicator {
             color: #2c3e50;
-            font-size: 18px;
-            font-weight: bold;
+            font-size: 20px;
+            font-weight: 800;
+            background: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
         }
         .icon-btn {
             background: white;
-            border: 2px solid #dfe6e9;
-            border-radius: 50%;
-            width: 44px;
-            height: 44px;
+            border: none;
+            border-radius: 12px;
+            width: 46px;
+            height: 46px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+            font-size: 22px;
             cursor: pointer;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            touch-action: manipulation;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            transition: all 0.2s ease;
+            border-bottom: 3px solid #cbd5e1;
         }
         .icon-btn:active {
-            transform: scale(0.9);
-            background-color: #f1f2f6;
+            transform: translateY(2px);
+            border-bottom-width: 1px;
+            background-color: #f8fafc;
         }
 
+        /* Premium Game Container */
         #game-container {
             position: relative;
             width: 360px;
             height: 480px;
             background: white;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.12);
             overflow: hidden;
-            border: 4px solid #34495e;
+            border: 4px solid #2c3e50;
             touch-action: none;
         }
         .grid-bg {
             position: absolute;
             width: 100%;
             height: 100%;
-            background-image: radial-gradient(#dfe6e9 2px, transparent 2px);
-            background-size: 20px 20px;
+            background-image: radial-gradient(#cbd5e1 2px, transparent 2px);
+            background-size: 24px 24px;
             pointer-events: none;
         }
         .arrow-group {
             cursor: pointer;
-            transition: transform 0.4s ease-out, opacity 0.4s;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s;
         }
         .arrow-line {
             fill: none;
-            stroke: #1e272e;
-            stroke-width: 6;
+            stroke: #2c3e50;
+            stroke-width: 7;
             stroke-linecap: round;
             stroke-linejoin: round;
             pointer-events: none; 
@@ -103,22 +114,21 @@
         .arrow-hitbox {
             fill: none;
             stroke: transparent;
-            stroke-width: 40; 
+            stroke-width: 45; 
             stroke-linecap: round;
             stroke-linejoin: round;
             cursor: pointer;
         }
         
         @keyframes hint-glow {
-            0% { stroke: #1e272e; stroke-width: 6; }
-            50% { stroke: #2ecc71; stroke-width: 12; }
-            100% { stroke: #1e272e; stroke-width: 6; }
+            0% { stroke: #2c3e50; stroke-width: 7; }
+            50% { stroke: #2ecc71; stroke-width: 14; }
+            100% { stroke: #2c3e50; stroke-width: 7; }
         }
         .hint-active .arrow-line {
             animation: hint-glow 0.5s ease-in-out 3;
         }
 
-        /* Modals/Overlays */
         .overlay-screen {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -129,17 +139,23 @@
             justify-content: center;
             display: none;
             z-index: 10;
+            backdrop-filter: blur(4px);
         }
         .action-btn {
-            background-color: #5c67f2;
+            background: linear-gradient(135deg, #6c5ce7, #a8a5ff);
             color: white;
             border: none;
-            padding: 14px 40px;
+            padding: 15px 45px;
             font-size: 18px;
             font-weight: bold;
-            border-radius: 25px;
+            border-radius: 30px;
             cursor: pointer;
-            box-shadow: 0 5px 15px rgba(92, 103, 242, 0.4);
+            box-shadow: 0 6px 20px rgba(108, 92, 231, 0.4);
+            border-bottom: 4px solid #4834d4;
+        }
+        .action-btn:active {
+            transform: translateY(2px);
+            border-bottom-width: 1px;
         }
     </style>
 </head>
@@ -161,19 +177,19 @@
         <svg id="game-svg" width="360" height="480" style="position: absolute; top:0; left:0;">
             <defs>
                 <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="8" refY="3.5" orient="auto">
-                    <polygon points="0 0, 10 3.5, 0 7" fill="#1e272e"/>
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#2c3e50"/>
                 </marker>
             </defs>
             <g id="arrows-container"></g>
         </svg>
 
         <div id="win-screen" class="overlay-screen">
-            <h2 id="win-title" style="margin-bottom: 20px; color: #2ecc71;">Level Cleared! 🎉</h2>
+            <h2 id="win-title" style="margin-bottom: 20px; color: #2ecc71; font-size: 24px;">Level Cleared! 🎉</h2>
             <button class="action-btn" id="action-btn" onclick="nextLevel()">Next Level</button>
         </div>
 
         <div id="gameover-screen" class="overlay-screen">
-            <h2 style="margin-bottom: 20px; color: #e74c3c;">Game Over! 😢</h2>
+            <h2 style="margin-bottom: 20px; color: #e74c3c; font-size: 24px;">Game Over! 😢</h2>
             <button class="action-btn" onclick="resetCurrentLevel()">Try Again</button>
         </div>
     </div>
@@ -195,40 +211,63 @@
         let maxLives = 3;
         let remainingLives = maxLives;
 
-        // Perfectly layered configuration so levels don't jam up at start
-        const ALL_LEVELS = [
-            // Level 1
+        // Base handcrafted levels
+        const PREBUILT_LEVELS = [
             [
-                { id: "a1", dir: "R", path: "M 40 80 L 320 80" },
-                { id: "a2", dir: "U", path: "M 100 290 L 100 150" },
-                { id: "a3", dir: "D", path: "M 180 180 L 260 180 L 260 300" },
-                { id: "a4", dir: "L", path: "M 300 390 L 60 390" }
+                { dir: "R", path: "M 40 80 L 320 80" },
+                { dir: "U", path: "M 100 290 L 100 150" },
+                { dir: "D", path: "M 180 180 L 260 180 L 260 300" },
+                { dir: "L", path: "M 300 390 L 60 390" }
             ],
-            // Level 2 (Matching original geometry perfectly)
             [
-                { id: "b1", dir: "U", path: "M 75 410 L 75 145" },
-                { id: "b2", dir: "R", path: "M 55 265 L 315 265" },
-                { id: "b3", dir: "L", path: "M 315 175 L 125 175" },
-                { id: "b4", dir: "D", path: "M 225 75 L 225 355" },
-                { id: "b5", dir: "R", path: "M 105 345 L 295 345" }
-            ],
-            // Level 3
-            [
-                { id: "c1", dir: "R", path: "M 40 100 L 320 100" },
-                { id: "c2", dir: "D", path: "M 80 60 L 80 220 L 200 220" },
-                { id: "c3", dir: "L", path: "M 290 150 L 140 150" },
-                { id: "c4", dir: "U", path: "M 160 420 L 160 290" },
-                { id: "c5", dir: "D", path: "M 270 130 L 270 400" },
-                { id: "c6", dir: "L", path: "M 320 370 L 60 370" }
+                { dir: "U", path: "M 75 410 L 75 145" },
+                { dir: "R", path: "M 55 265 L 315 265" },
+                { dir: "L", path: "M 315 175 L 125 175" },
+                { dir: "D", path: "M 225 75 L 225 355" },
+                { dir: "R", path: "M 105 345 L 295 345" }
             ]
         ];
 
+        // AI Procedural Level Generator for generating up to 100,000+ levels automatically!
+        function generateProceduralLevel(seedLevel) {
+            const directions = ['R', 'L', 'U', 'D'];
+            const arrowCount = Math.min(4 + Math.floor(seedLevel / 5), 8); // Levels get harder gradually
+            const levelArrows = [];
+            
+            const standardGridsX = [60, 110, 160, 210, 260, 310];
+            const standardGridsY = [80, 140, 200, 260, 320, 380];
+
+            for (let i = 0; i < arrowCount; i++) {
+                const dir = directions[Math.floor(Math.random() * directions.length)];
+                let x1, y1, x2, y2;
+
+                if (dir === 'R' || dir === 'L') {
+                    y1 = y2 = standardGridsY[Math.floor(Math.random() * standardGridsY.length)];
+                    x1 = standardGridsX[0];
+                    x2 = standardGridsX[standardGridsX.length - 1];
+                    if (dir === 'L') [x1, x2] = [x2, x1];
+                } else {
+                    x1 = x2 = standardGridsX[Math.floor(Math.random() * standardGridsX.length)];
+                    y1 = standardGridsY[0];
+                    y2 = standardGridsY[standardGridsY.length - 1];
+                    if (dir === 'U') [y1, y2] = [y2, y1];
+                }
+
+                levelArrows.push({ dir: dir, path: `M ${x1} ${y1} L ${x2} ${y2}` });
+            }
+            return levelArrows;
+        }
+
+        function triggerVibration() {
+            if (navigator.vibrate) {
+                navigator.vibrate(80); // Native mobile hardware vibration trigger
+            }
+        }
+
         function updateLivesDisplay() {
             let hearts = "";
-            for (let i = 0; i < remainingLives; i++) {
-                hearts += "❤️";
-            }
-            if (hearts === "") hearts = "💀 Game Over";
+            for (let i = 0; i < remainingLives; i++) hearts += "❤️";
+            if (hearts === "") hearts = "💀 OVER";
             livesContainer.innerText = hearts;
         }
 
@@ -240,7 +279,11 @@
             remainingLives = maxLives;
             updateLivesDisplay();
 
-            const levelData = ALL_LEVELS[levelIndex];
+            // Load from prebuilt or use the AI generator
+            const levelData = levelIndex < PREBUILT_LEVELS.length ? 
+                               PREBUILT_LEVELS[levelIndex] : 
+                               generateProceduralLevel(levelIndex);
+
             levelData.forEach(arrow => {
                 const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
                 g.setAttribute("class", "arrow-group");
@@ -261,19 +304,32 @@
             });
         }
 
-        // True Raycast Algorithm: Only blocks if TIP points directly onto another active line
+        function isColliding(path1, path2) {
+            const len1 = path1.getTotalLength();
+            const len2 = path2.getTotalLength();
+            for (let i = 0; i <= len1; i += 5) {
+                const pt1 = path1.getPointAtLength(i);
+                for (let j = 0; j <= len2; j += 5) {
+                    const pt2 = path2.getPointAtLength(j);
+                    if (Math.abs(pt1.x - pt2.x) < 12 && Math.abs(pt1.y - pt2.y) < 12) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
         function testEscapePath(group) {
             if (remainingLives <= 0) return { isBlocked: true };
 
             const direction = group.getAttribute('data-dir');
             const mainLine = group.querySelector('.arrow-line');
             const totalLen = mainLine.getTotalLength();
-            const tipPoint = mainLine.getPointAtLength(totalLen); // Exact coordinates of Arrow Head Tip
+            const tipPoint = mainLine.getPointAtLength(totalLen); 
 
             const otherGroups = Array.from(document.querySelectorAll('.arrow-group')).filter(g => g !== group);
             let isBlocked = false;
 
-            // Check if arrow tip hits ANY active line during forward movement
             for (let other of otherGroups) {
                 const otherLine = other.querySelector('.arrow-line');
                 const otherLen = otherLine.getTotalLength();
@@ -314,12 +370,12 @@
                     checkWin();
                 }, 400);
             } else {
-                // Shake FeedBack
-                clickedGroup.style.transform = 'translate(8px, 0px)';
-                setTimeout(() => clickedGroup.style.transform = 'translate(-8px, 0px)', 60);
+                // Shake and trigger hardware vibration
+                triggerVibration();
+                clickedGroup.style.transform = 'translate(10px, 0px)';
+                setTimeout(() => clickedGroup.style.transform = 'translate(-10px, 0px)', 60);
                 setTimeout(() => clickedGroup.style.transform = 'translate(0px, 0px)', 120);
 
-                // Lose a Life
                 remainingLives--;
                 updateLivesDisplay();
                 if (remainingLives <= 0) {
@@ -344,7 +400,7 @@
             loadLevel(currentLevel);
         }
 
-        // High responsiveness mobile touch listeners
+        // Highly responsive listeners
         svg.addEventListener('touchstart', (e) => {
             e.preventDefault();
             const group = e.target.closest('.arrow-group');
@@ -364,25 +420,15 @@
 
         function checkWin() {
             if (document.querySelectorAll('.arrow-group').length === 0) {
-                if (currentLevel < ALL_LEVELS.length - 1) {
-                    winTitle.innerText = "Level Cleared! 🎉";
-                    actionBtn.innerText = "Next Level";
-                } else {
-                    winTitle.innerText = "You Won the Game! 🔥🏆";
-                    actionBtn.innerText = "Restart Game";
-                }
+                winTitle.innerText = `Level ${currentLevel + 1} Cleared! 🎉`;
+                actionBtn.innerText = "Next Level";
                 winScreen.style.display = 'flex';
             }
         }
 
         function nextLevel() {
-            if (currentLevel < ALL_LEVELS.length - 1) {
-                currentLevel++;
-                loadLevel(currentLevel);
-            } else {
-                currentLevel = 0;
-                loadLevel(currentLevel);
-            }
+            currentLevel++;
+            loadLevel(currentLevel);
         }
 
         loadLevel(currentLevel);
