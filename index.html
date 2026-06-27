@@ -14,7 +14,7 @@
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: #f1f5f9;
+            background-color: #f8fafc;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -29,18 +29,18 @@
             justify-content: space-between;
             align-items: center;
             width: 100%;
-            max-width: 360px;
+            max-width: 340px;
             margin-bottom: 16px;
         }
 
         #lives-container {
             display: flex;
             gap: 4px;
-            font-size: 18px;
+            font-size: 16px;
             background: #ffffff;
             padding: 6px 14px;
             border-radius: 20px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
             border: 1px solid #e2e8f0;
             font-weight: bold;
         }
@@ -55,35 +55,35 @@
             background: #ffffff;
             border: 1px solid #e2e8f0;
             border-radius: 50%;
-            width: 42px;
-            height: 42px;
+            width: 38px;
+            height: 38px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
             transition: transform 0.1s ease;
         }
         .icon-btn:active {
             transform: scale(0.9);
-            background-color: #f8fafc;
+            background-color: #f1f5f9;
         }
         .icon-btn svg {
-            width: 20px;
-            height: 20px;
+            width: 18px;
+            height: 18px;
             fill: #475569;
         }
 
         #game-container {
             position: relative;
             width: 100%;
-            max-width: 360px;
-            aspect-ratio: 1 / 1.35;
+            max-width: 340px;
+            aspect-ratio: 1 / 1.3;
             background: #ffffff;
-            border-radius: 24px;
-            box-shadow: 0 20px 40px rgba(15, 23, 42, 0.08);
+            border-radius: 28px;
+            box-shadow: 0 20px 40px rgba(15, 23, 42, 0.06);
             overflow: hidden;
-            border: 4px solid #0f172a;
+            border: 3px solid #0f172a;
             touch-action: none;
         }
 
@@ -91,21 +91,21 @@
             position: absolute;
             width: 100%;
             height: 100%;
-            background-image: radial-gradient(#cbd5e1 2px, transparent 2px);
+            background-image: radial-gradient(#e2e8f0 2px, transparent 2px);
             background-size: 24px 24px;
             background-position: 12px 12px;
             pointer-events: none;
         }
         
-        /* Chote aur Sleeker Premium Arrows */
+        /* Premium Small & Sleek Arrows Design */
         .arrow-group {
             cursor: pointer;
-            transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.25s;
+            transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.3s;
         }
         .arrow-line {
             fill: none;
             stroke: #0f172a;
-            stroke-width: 4.5; /* Premium thin design */
+            stroke-width: 4; /* Thinner and sharper */
             stroke-linecap: round;
             stroke-linejoin: round;
             pointer-events: none; 
@@ -113,9 +113,7 @@
         .arrow-hitbox {
             fill: none;
             stroke: transparent;
-            stroke-width: 35; 
-            stroke-linecap: round;
-            stroke-linejoin: round;
+            stroke-width: 32; 
             cursor: pointer;
         }
 
@@ -126,7 +124,7 @@
         .overlay-screen {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255, 255, 255, 0.97);
+            background: rgba(255, 255, 255, 0.96);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -135,15 +133,15 @@
             z-index: 10;
         }
         .action-btn {
-            background: #4f46e5;
+            background: #0f172a;
             color: white;
             border: none;
-            padding: 12px 36px;
-            font-size: 15px;
+            padding: 12px 32px;
+            font-size: 14px;
             font-weight: 600;
-            border-radius: 20px;
+            border-radius: 16px;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
         }
     </style>
 </head>
@@ -168,24 +166,24 @@
     <div id="game-container">
         <div class="grid-bg"></div>
         
-        <div id="level-indicator" style="position: absolute; top: 14px; left: 14px; z-index: 5; font-size: 13px; font-weight: bold; background: #f1f5f9; padding: 4px 12px; border-radius: 10px;">Level 1</div>
+        <div id="level-indicator" style="position: absolute; top: 14px; left: 14px; z-index: 5; font-size: 12px; font-weight: bold; background: #f1f5f9; padding: 4px 12px; border-radius: 10px;">Level 1</div>
 
-        <svg id="game-svg" viewBox="0 0 360 486" width="100%" height="100%" style="position: absolute; top:0; left:0;">
+        <svg id="game-svg" viewBox="0 0 360 468" width="100%" height="100%" style="position: absolute; top:0; left:0;">
             <defs>
-                <marker id="arrowhead" markerWidth="6" markerHeight="5" refX="3.5" refY="2.5" orient="auto">
-                    <polygon points="0 0, 6 2.5, 0 5" fill="#0f172a"/>
+                <marker id="arrowhead" markerWidth="5" markerHeight="4" refX="2.5" refY="2" orient="auto">
+                    <polygon points="0 0, 5 2, 0 4" fill="#0f172a"/>
                 </marker>
             </defs>
             <g id="arrows-container"></g>
         </svg>
 
         <div id="win-screen" class="overlay-screen">
-            <h2 style="margin-bottom: 16px; color: #10b981;">Level Cleared! 🎉</h2>
+            <h2 style="margin-bottom: 16px; color: #10b981; font-weight: 700;">Level Cleared! 🎉</h2>
             <button class="action-btn" onclick="nextLevel()">Next Level</button>
         </div>
 
         <div id="gameover-screen" class="overlay-screen">
-            <h2 style="margin-bottom: 16px; color: #ef4444;">Game Over! 😢</h2>
+            <h2 style="margin-bottom: 16px; color: #ef4444; font-weight: 700;">Game Over! 😢</h2>
             <button class="action-btn" onclick="resetCurrentLevel()">Try Again</button>
         </div>
     </div>
@@ -200,7 +198,7 @@
 
         let currentLevel = 0;
         let remainingLives = 3;
-        let isProcessingTap = false; // Anti-glitch double tap lock
+        let isAnimating = false;
 
         const HANDCRAFTED_LEVELS = [
             [
@@ -223,7 +221,7 @@
 
         function generateProceduralLevel(levelNum) {
             const levelArrows = [];
-            const count = Math.min(4 + Math.floor(levelNum / 3), 9);
+            const count = Math.min(4 + Math.floor(levelNum / 3), 8);
             const directions = ["R", "L", "U", "D"];
             
             for(let i=0; i<count; i++) {
@@ -231,10 +229,10 @@
                 let y1 = 120 + Math.floor(Math.random()*5)*60;
                 let x2 = 60 + Math.floor(Math.random()*4)*60;
                 let y2 = 120 + Math.floor(Math.random()*5)*60;
+                if(x1 === x2 && y1 === y2) { x2 += 60; }
                 
-                const dir = directions[Math.floor(Math.random()*directions.length)];
                 levelArrows.push({
-                    id: i, dir: dir, path: `M ${x1} ${y1} L ${x2} ${y2}`
+                    id: i, dir: directions[Math.floor(Math.random()*4)], path: `M ${x1} ${y1} L ${x2} ${y2}`
                 });
             }
             return levelArrows;
@@ -253,7 +251,7 @@
             levelIndicator.innerText = `Level ${index + 1}`;
             remainingLives = 3;
             updateLivesDisplay();
-            isProcessingTap = false;
+            isAnimating = false;
 
             const data = index < HANDCRAFTED_LEVELS.length ? HANDCRAFTED_LEVELS[index] : generateProceduralLevel(index);
 
@@ -277,16 +275,35 @@
             });
         }
 
-        function checkPathIntersection(movingPath, stablePath) {
-            const len1 = movingPath.getTotalLength();
-            const len2 = stablePath.getTotalLength();
-            const step = 4; 
-            for(let i=0; i<=len1; i+=step) {
-                let p1 = movingPath.getPointAtLength(i);
-                for(let j=0; j<=len2; j+=step) {
-                    let p2 = stablePath.getPointAtLength(j);
-                    if(Math.abs(p1.x - p2.x) < 10 && Math.abs(p1.y - p2.y) < 10) {
-                        return true;
+        // Precision Raycast collision check only in FRONT direction
+        function isPathObstructed(movingGroup) {
+            const movingLine = movingGroup.querySelector('.arrow-line');
+            const dir = movingGroup.getAttribute('data-dir');
+            const len = movingLine.getTotalLength();
+            const headPoint = movingLine.getPointAtLength(len); // Arrowhead tip position
+
+            const otherGroups = Array.from(document.querySelectorAll('.arrow-group')).filter(g => g !== movingGroup);
+
+            for (let other of otherGroups) {
+                const otherLine = other.querySelector('.arrow-line');
+                const otherLen = otherLine.getTotalLength();
+                
+                // Scan the forward trajectory ray of the arrow
+                for (let step = 0; step < 400; step += 6) {
+                    let rx = headPoint.x;
+                    let ry = headPoint.y;
+
+                    if (dir === "R") rx += step;
+                    if (dir === "L") rx -= step;
+                    if (dir === "U") ry -= step;
+                    if (dir === "D") ry += step;
+
+                    // If ray hits any part of another existing arrow's path, it is blocked!
+                    for (let j = 0; j <= otherLen; j += 5) {
+                        let op = otherLine.getPointAtLength(j);
+                        if (Math.abs(rx - op.x) < 10 && Math.abs(ry - op.y) < 10) {
+                            return true; 
+                        }
                     }
                 }
             }
@@ -294,26 +311,15 @@
         }
 
         function handleArrowTap(group) {
-            if (remainingLives <= 0 || isProcessingTap) return;
-            isProcessingTap = true; // Lock active
+            if (remainingLives <= 0 || isAnimating) return;
+            isAnimating = true;
 
-            const targetLine = group.querySelector('.arrow-line');
-            const otherGroups = Array.from(document.querySelectorAll('.arrow-group')).filter(g => g !== group);
-            
-            let isBlocked = false;
-            for (let other of otherGroups) {
-                if (checkPathIntersection(targetLine, other.querySelector('.arrow-line'))) {
-                    isBlocked = true;
-                    break;
-                }
-            }
-
-            if (!isBlocked) {
+            if (!isPathObstructed(group)) {
                 group.style.pointerEvents = 'none'; 
                 const dir = group.getAttribute('data-dir');
                 let tx = 0, ty = 0;
-                if(dir === "R") tx = 550;
-                if(dir === "L") tx = -550;
+                if(dir === "R") tx = 600;
+                if(dir === "L") tx = -600;
                 if(dir === "U") ty = -600;
                 if(dir === "D") ty = 600;
 
@@ -322,13 +328,13 @@
                 
                 setTimeout(() => {
                     group.remove();
-                    isProcessingTap = false; // Unlock
+                    isAnimating = false;
                     if (document.querySelectorAll('.arrow-group').length === 0) {
                         winScreen.style.display = 'flex';
                     }
                 }, 350);
             } else {
-                if (navigator.vibrate) navigator.vibrate(60);
+                if (navigator.vibrate) navigator.vibrate(50);
 
                 group.classList.add('arrow-error');
                 group.style.transform = 'translate(4px, 0px)';
@@ -337,7 +343,7 @@
                 
                 setTimeout(() => {
                     group.classList.remove('arrow-error');
-                    isProcessingTap = false; // Unlock
+                    isAnimating = false;
                 }, 400);
 
                 remainingLives--;
@@ -351,15 +357,9 @@
         function triggerHint() {
             const groups = Array.from(document.querySelectorAll('.arrow-group'));
             for (let g of groups) {
-                let line = g.querySelector('.arrow-line');
-                let blocked = false;
-                let others = groups.filter(o => o !== g);
-                for(let o of others) {
-                    if(checkPathIntersection(line, o.querySelector('.arrow-line'))) { blocked = true; break; }
-                }
-                if(!blocked) {
+                if (!isPathObstructed(g)) {
                     g.style.opacity = '0.2';
-                    setTimeout(() => g.style.opacity = '1', 500);
+                    setTimeout(() => g.style.opacity = '1', 400);
                     break;
                 }
             }
@@ -368,18 +368,15 @@
         function resetCurrentLevel() { loadLevel(currentLevel); }
         function nextLevel() { currentLevel++; loadLevel(currentLevel); }
 
-        // Bulletproof Event Handler to fix freeze glitch completely
-        svg.addEventListener('touchstart', (e) => {
+        // Perfect unified input handling (No Double Taps, No Freeze)
+        function onAction(e) {
             e.preventDefault();
             const g = e.target.closest('.arrow-group');
-            if(g) handleArrowTap(g);
-        }, { passive: false });
+            if (g) handleArrowTap(g);
+        }
 
-        svg.addEventListener('click', (e) => {
-            // If touchstart already handled it, click won't cause double trigger glitch
-            const g = e.target.closest('.arrow-group');
-            if(g) handleArrowTap(g);
-        });
+        svg.addEventListener('touchstart', onAction, { passive: false });
+        svg.addEventListener('click', onAction);
 
         document.getElementById('refresh-btn').addEventListener('click', resetCurrentLevel);
         document.getElementById('hint-btn').addEventListener('click', triggerHint);
