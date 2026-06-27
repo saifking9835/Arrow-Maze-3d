@@ -27,10 +27,11 @@
             color: #2c3e50;
             margin-bottom: 5px;
         }
-        .subtitle {
+        #level-indicator {
             color: #7f8c8d;
             margin-bottom: 20px;
-            font-size: 14px;
+            font-size: 16px;
+            font-weight: bold;
         }
         #game-container {
             position: relative;
@@ -51,13 +52,11 @@
             background-size: 20px 20px;
             pointer-events: none;
         }
-        /* Touch area ko bada karne ke liye wrapper group */
         .arrow-group {
             cursor: pointer;
             pointer-events: auto;
-            transition: transform 0.5s ease-in, opacity 0.5s;
+            transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s;
         }
-        /* Dikhne wali line */
         .arrow-line {
             fill: none;
             stroke: #1e272e;
@@ -66,17 +65,16 @@
             stroke-linejoin: round;
             pointer-events: none; 
         }
-        /* Mobile par touch pakadne ke liye invisible moti line */
         .arrow-hitbox {
             fill: none;
             stroke: transparent;
-            stroke-width: 30; 
+            stroke-width: 35; 
             stroke-linecap: round;
             stroke-linejoin: round;
             cursor: pointer;
         }
         .arrow-group:active .arrow-line {
-            stroke: #3498db;
+            stroke: #5c67f2;
         }
         #win-screen {
             position: absolute;
@@ -93,19 +91,23 @@
             background-color: #5c67f2;
             color: white;
             border: none;
-            padding: 12px 35px;
+            padding: 14px 40px;
             font-size: 18px;
             font-weight: bold;
             border-radius: 25px;
             cursor: pointer;
-            box-shadow: 0 5px 15px rgba(92, 103, 242, 0.3);
+            box-shadow: 0 5px 15px rgba(92, 103, 242, 0.4);
+            transition: transform 0.1s;
+        }
+        button:active {
+            transform: scale(0.95);
         }
     </style>
 </head>
 <body>
 
     <h1>Arrows</h1>
-    <div class="subtitle">Level 1 - Clear all paths!</div>
+    <div id="level-indicator">Level 1</div>
 
     <div id="game-container">
         <div class="grid-bg"></div>
@@ -116,52 +118,90 @@
                     <polygon points="0 0, 10 3.5, 0 7" fill="#1e272e"/>
                 </marker>
             </defs>
-
-            <!-- Arrow 1: Top Right -->
-            <g id="arrow1" class="arrow-group" data-dir="R">
-                <path class="arrow-hitbox" d="M 40 80 L 320 80" />
-                <path class="arrow-line" d="M 40 80 L 320 80" marker-end="url(#arrowhead)" />
-            </g>
-            
-            <!-- Arrow 2: Up -->
-            <g id="arrow2" class="arrow-group" data-dir="U">
-                <path class="arrow-hitbox" d="M 100 290 L 100 150" />
-                <path class="arrow-line" d="M 100 290 L 100 150" marker-end="url(#arrowhead)" />
-            </g>
-            
-            <!-- Arrow 3: Hooked Down -->
-            <g id="arrow3" class="arrow-group" data-dir="D">
-                <path class="arrow-hitbox" d="M 180 180 L 260 180 L 260 300" />
-                <path class="arrow-line" d="M 180 180 L 260 180 L 260 300" marker-end="url(#arrowhead)" />
-            </g>
-            
-            <!-- Arrow 4: Bottom Left -->
-            <g id="arrow4" class="arrow-group" data-dir="L">
-                <path class="arrow-hitbox" d="M 300 390 L 60 390" />
-                <path class="arrow-line" d="M 300 390 L 60 390" marker-end="url(#arrowhead)" />
-            </g>
+            <g id="arrows-container"></g>
         </svg>
 
         <div id="win-screen">
-            <h2 style="margin-bottom: 15px; color: #2ecc71;">Level Cleared! 🎉</h2>
-            <button onclick="resetGame()">Play Again</button>
+            <h2 id="win-title" style="margin-bottom: 20px; color: #2ecc71;">Level Cleared! 🎉</h2>
+            <button id="action-btn" onclick="nextLevel()">Next Level</button>
         </div>
     </div>
 
     <script>
         const svg = document.getElementById('game-svg');
+        const container = document.getElementById('arrows-container');
         const winScreen = document.getElementById('win-screen');
+        const levelIndicator = document.getElementById('level-indicator');
+        const actionBtn = document.getElementById('action-btn');
+        const winTitle = document.getElementById('win-title');
+
         const BOARD_WIDTH = 360;
         const BOARD_HEIGHT = 480;
+        
+        let currentLevel = 0;
+
+        // Yahan humne 3 alag-alag aur majedar levels ki data banayi hai
+        const ALL_LEVELS = [
+            // Level 1
+            [
+                { id: "a1", dir: "R", path: "M 40 80 L 320 80" },
+                { id: "a2", dir: "U", path: "M 100 290 L 100 150" },
+                { id: "a3", dir: "D", path: "M 180 180 L 260 180 L 260 300" },
+                { id: "a4", dir: "L", path: "M 300 390 L 60 390" }
+            ],
+            // Level 2 (Thoda zyada arrows aur criss-cross)
+            [
+                { id: "b1", dir: "U", path: "M 60 400 L 60 100" },
+                { id: "b2", dir: "R", path: "M 40 200 L 300 200" },
+                { id: "b3", dir: "L", path: "M 320 140 L 120 140" },
+                { id: "b4", dir: "D", path: "M 220 80 L 220 360" },
+                { id: "b5", dir: "R", path: "M 100 300 L 280 300" }
+            ],
+            // Level 3 (Zig-Zag loops)
+            [
+                { id: "c1", dir: "R", path: "M 40 100 L 320 100" },
+                { id: "c2", dir: "D", path: "M 80 60 L 80 240 L 200 240" },
+                { id: "c3", dir: "L", path: "M 280 180 L 140 180" },
+                { id: "c4", dir: "U", path: "M 160 420 L 160 300" },
+                { id: "c5", dir: "D", path: "M 260 140 L 260 400" },
+                { id: "c6", dir: "L", path: "M 320 350 L 60 350" }
+            ]
+        ];
+
+        function loadLevel(levelIndex) {
+            container.innerHTML = "";
+            winScreen.style.display = 'none';
+            levelIndicator.innerText = `Level ${levelIndex + 1}`;
+
+            const levelData = ALL_LEVELS[levelIndex];
+            levelData.forEach(arrow => {
+                const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+                g.setAttribute("class", "arrow-group");
+                g.setAttribute("data-dir", arrow.dir);
+
+                const hitbox = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                hitbox.setAttribute("class", "arrow-hitbox");
+                hitbox.setAttribute("d", arrow.path);
+
+                const line = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                line.setAttribute("class", "arrow-line");
+                line.setAttribute("d", arrow.path);
+                line.setAttribute("marker-end", "url(#arrowhead)");
+
+                g.appendChild(hitbox);
+                g.appendChild(line);
+                container.appendChild(g);
+            });
+        }
 
         function isColliding(path1, path2) {
             const len1 = path1.getTotalLength();
             const len2 = path2.getTotalLength();
-            for (let i = 0; i <= len1; i += 8) {
+            for (let i = 0; i <= len1; i += 6) {
                 const pt1 = path1.getPointAtLength(i);
-                for (let j = 0; j <= len2; j += 8) {
+                for (let j = 0; j <= len2; j += 6) {
                     const pt2 = path2.getPointAtLength(j);
-                    if (Math.abs(pt1.x - pt2.x) < 12 && Math.abs(pt1.y - pt2.y) < 12) {
+                    if (Math.abs(pt1.x - pt2.x) < 10 && Math.abs(pt1.y - pt2.y) < 10) {
                         return true;
                     }
                 }
@@ -206,15 +246,15 @@
                 setTimeout(() => {
                     clickedGroup.remove();
                     checkWin();
-                }, 500);
+                }, 400);
             } else {
                 clickedGroup.style.transform = 'translate(8px, 0px)';
-                setTimeout(() => clickedGroup.style.transform = 'translate(-8px, 0px)', 80);
-                setTimeout(() => clickedGroup.style.transform = 'translate(0px, 0px)', 160);
+                setTimeout(() => clickedGroup.style.transform = 'translate(-8px, 0px)', 60);
+                setTimeout(() => clickedGroup.style.transform = 'translate(0px, 0px)', 120);
             }
         }
 
-        // Mobile touch aur desktop click dono ko support karne ke liye listener
+        // Event Listeners for Touch & Click
         svg.addEventListener('touchstart', (e) => {
             e.preventDefault();
             const group = e.target.closest('.arrow-group');
@@ -228,13 +268,29 @@
 
         function checkWin() {
             if (document.querySelectorAll('.arrow-group').length === 0) {
+                if (currentLevel < ALL_LEVELS.length - 1) {
+                    winTitle.innerText = "Level Cleared! 🎉";
+                    actionBtn.innerText = "Next Level";
+                } else {
+                    winTitle.innerText = "You Won the Game! 🔥🏆";
+                    actionBtn.innerText = "Restart Game";
+                }
                 winScreen.style.display = 'flex';
             }
         }
 
-        function resetGame() {
-            location.reload();
+        function nextLevel() {
+            if (currentLevel < ALL_LEVELS.length - 1) {
+                currentLevel++;
+                loadLevel(currentLevel);
+            } else {
+                currentLevel = 0;
+                loadLevel(currentLevel);
+            }
         }
+
+        // Initialize First Level
+        loadLevel(currentLevel);
     </script>
 </body>
 </html>
