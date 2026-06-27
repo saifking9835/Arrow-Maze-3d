@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Arrows - Premium Puzzle Escape</title>
+    <title>Arrows - Pure Premium Escape</title>
     <style>
         * {
             box-sizing: border-box;
@@ -14,101 +14,96 @@
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: #f3f4f6;
+            background-color: #f8fafc;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             min-height: 100vh;
-            color: #1f2937;
+            color: #0f172a;
             overflow: hidden;
         }
         
         #lives-container {
             display: flex;
-            gap: 6px;
-            font-size: 24px;
-            margin-bottom: 12px;
-            height: 32px;
+            gap: 8px;
+            font-size: 22px;
+            margin-bottom: 16px;
+            height: 28px;
         }
 
-        /* Premium Controls Row */
+        /* Top Header Navigation Panel */
         .controls-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            width: 420px;
-            padding: 0 10px;
-            margin-bottom: 15px;
+            width: 380px;
+            padding: 0 8px;
+            margin-bottom: 20px;
         }
         #level-indicator {
-            color: #1f2937;
+            color: #1e293b;
             font-size: 18px;
             font-weight: 700;
             background: #ffffff;
-            padding: 8px 24px;
-            border-radius: 30px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            border: 1px solid #e5e7eb;
+            padding: 6px 20px;
+            border-radius: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            border: 1px solid #e2e8f0;
         }
         .icon-btn {
             background: #ffffff;
-            border: 1px solid #e5e7eb;
+            border: 1px solid #e2e8f0;
             border-radius: 50%;
-            width: 50px;
-            height: 50px;
+            width: 46px;
+            height: 46px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+            transition: all 0.15s ease;
         }
         .icon-btn:active {
             transform: scale(0.92);
-            background-color: #f9fafb;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+            background-color: #f1f5f9;
         }
         .icon-btn svg {
-            width: 24px;
-            height: 24px;
-            fill: #4b5563;
-            transition: fill 0.2s;
-        }
-        #hint-btn:hover svg {
-            fill: #f59e0b; /* Golden Glow on Premium Idea Button */
+            width: 22px;
+            height: 22px;
+            fill: #475569;
         }
 
-        /* Larger Background Container */
+        /* Pure Minimalist Game Frame Container */
         #game-container {
             position: relative;
-            width: 420px;
-            height: 600px;
+            width: 380px;
+            height: 540px;
             background: #ffffff;
-            border-radius: 32px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.06);
+            border-radius: 28px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.05);
             overflow: hidden;
-            border: 5px solid #1f2937;
+            border: 4px solid #0f172a;
             touch-action: none;
         }
         .grid-bg {
             position: absolute;
             width: 100%;
             height: 100%;
-            background-image: radial-gradient(#d1d5db 2.5px, transparent 2.5px);
-            background-size: 28px 28px;
+            background-image: radial-gradient(#cbd5e1 2px, transparent 2px);
+            background-size: 24px 24px;
             pointer-events: none;
         }
         
-        /* Smaller, Sleeker Arrows */
+        /* Sleek & Thin Miniature Arrows Styling */
         .arrow-group {
             cursor: pointer;
-            transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s;
+            transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.35s;
         }
         .arrow-line {
             fill: none;
-            stroke: #1f2937;
-            stroke-width: 5.5; /* Slender, small stroke */
+            stroke: #0f172a;
+            stroke-width: 4.5; /* Slender minimal line weight matching original app */
             stroke-linecap: round;
             stroke-linejoin: round;
             pointer-events: none; 
@@ -116,21 +111,21 @@
         .arrow-hitbox {
             fill: none;
             stroke: transparent;
-            stroke-width: 38; 
+            stroke-width: 32; 
             stroke-linecap: round;
             stroke-linejoin: round;
             cursor: pointer;
         }
 
-        /* Error Flash style */
         .arrow-error .arrow-line {
             stroke: #ef4444 !important;
         }
 
+        /* Overlay Interface */
         .overlay-screen {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255, 255, 255, 0.96);
+            background: rgba(255, 255, 255, 0.98);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -139,15 +134,15 @@
             z-index: 10;
         }
         .action-btn {
-            background: #3b82f6;
+            background: #4f46e5;
             color: white;
             border: none;
-            padding: 14px 45px;
-            font-size: 16px;
+            padding: 12px 40px;
+            font-size: 15px;
             font-weight: 600;
-            border-radius: 30px;
+            border-radius: 25px;
             cursor: pointer;
-            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+            box-shadow: 0 6px 16px rgba(79, 70, 229, 0.25);
         }
     </style>
 </head>
@@ -156,15 +151,26 @@
     <div id="lives-container">❤️❤️❤️</div>
     
     <div class="controls-row">
-        <div class="icon-btn" id="hint-btn" title="Idea">
+        <div class="icon-btn" id="hint-btn" title="Hint/Idea">
             <svg viewBox="0 0 24 24">
                 <path d="M12 2C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7zm2.5 14h-5v-1h5v1zm0-2h-5v-1h5v1z M9 20h6v1H9z"/>
             </svg>
         </div>
+
         <div id="level-indicator">Level 1</div>
+
+        <div class="icon-btn" id="sound-btn" title="Toggle Sound">
+            <svg id="sound-icon-on" viewBox="0 0 24 24">
+                <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+            </svg>
+            <svg id="sound-icon-off" viewBox="0 0 24 24" style="display: none;">
+                <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.21.05-.42.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>
+            </svg>
+        </div>
+
         <div class="icon-btn" id="refresh-btn" title="Reset">
-            <svg viewBox="0 0 1000 1000">
-                <path d="M500,85c102.5,0,199.3,36.9,275.1,102.6L873.9,89c19.1-19.1,50.1-5.6,50.1,21.5v284.2c0,16.6-13.4,30-30,30H609.8c-27.1,0-40.6-31-21.5-50.1l90.9-90.9C623.5,233,564.1,205,500,205c-162.9,0-295,132.1-295,295c0,42.8,9.2,83.4,25.6,120.3c10,22.6,0.3,49.2-21.7,59.8l-18.7,9c-23,11.1-50.5,1-61-22.1C102.2,615,85,559.5,85,500C85,270.8,270.8,85,500,85z M889.3,316.3c15.1,53,25.7,108.5,25.7,166.4c0,229.2-185.8,415-415,415c-100.8,0-196.1-36-271-99.7l-91.8,91.8c-19.1,19.1-50.1,5.6-50.1-21.5V604.2c0-16.6,13.4-30,30-30h284.2c27.1,0,40.6,31,21.5,50.1l-94,94C401.4,781.4,448.9,795,500,795c162.9,0,295-132.1,295-295c0-45.7-10.5-88.9-29-127.6c-10.2-21.4-1.2-47.4,20-58.4l20.4-10.6C829.3,281.3,858,291,889.3,316.3z"/>
+            <svg viewBox="0 0 24 24">
+                <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
             </svg>
         </div>
     </div>
@@ -172,293 +178,44 @@
     <div id="game-container">
         <div class="grid-bg"></div>
         
-        <svg id="game-svg" width="420" height="600" style="position: absolute; top:0; left:0;">
+        <svg id="game-svg" width="380" height="540" style="position: absolute; top:0; left:0;">
             <defs>
-                <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="4" refY="3" orient="auto">
-                    <polygon points="0 0, 8 3, 0 6" fill="#1f2937"/>
+                <marker id="arrowhead" markerWidth="6" markerHeight="5" refX="3" refY="2.5" orient="auto">
+                    <polygon points="0 0, 6 2.5, 0 5" fill="#0f172a"/>
                 </marker>
             </defs>
             <g id="arrows-container"></g>
         </svg>
 
         <div id="win-screen" class="overlay-screen">
-            <h2 style="margin-bottom: 20px; color: #10b981; font-size: 26px;">Level Cleared! 🎉</h2>
+            <h2 style="margin-bottom: 24px; color: #10b981; font-size: 24px; font-weight: 700;">Level Cleared! 🎉</h2>
             <button class="action-btn" onclick="nextLevel()">Next Level</button>
         </div>
 
         <div id="gameover-screen" class="overlay-screen">
-            <h2 style="margin-bottom: 20px; color: #ef4444; font-size: 26px;">Game Over! 😢</h2>
+            <h2 style="margin-bottom: 24px; color: #ef4444; font-size: 24px; font-weight: 700;">Game Over! 😢</h2>
             <button class="action-btn" onclick="resetCurrentLevel()">Try Again</button>
         </div>
     </div>
 
     <script>
-        // Web Audio API Context for dynamic glitch-free procedural music & sounds
         const AudioCtx = window.AudioContext || window.webkitAudioContext;
         let audioCtx = null;
-        let bgmNode = null;
+        let isSoundOn = true;
 
         function initAudio() {
             if (!audioCtx) {
                 audioCtx = new AudioCtx();
-                playBackgroundMusic();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
             }
         }
 
-        function playBackgroundMusic() {
-            // Procedural ambient game melody music
-            let notes = [261.63, 293.66, 329.63, 392.00, 440.00];
-            let idx = 0;
-            
-            setInterval(() => {
-                if (!audioCtx || audioCtx.state === 'suspended') return;
+        // Procedural soft synth tones that won't run infinitely or cause leaks after closing
+        function playTone(freq, type, duration, vol) {
+            if (!isSoundOn) return;
+            initAudio();
+            try {
                 let osc = audioCtx.createOscillator();
-                let gain = audioCtx.createGain();
-                osc.type = 'triangle';
-                osc.frequency.setValueAtTime(notes[idx % notes.length], audioCtx.currentTime);
-                gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.8);
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.start();
-                osc.stop(audioCtx.currentTime + 1.9);
-                idx++;
-            }, 1000);
-        }
-
-        function playSound(type) {
-            if (!audioCtx) return;
-            let osc = audioCtx.createOscillator();
-            let gain = audioCtx.createGain();
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-
-            if (type === 'tap') {
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(587.33, audioCtx.currentTime);
-                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
-                osc.start(); osc.stop(audioCtx.currentTime + 0.12);
-            } else if (type === 'crash') {
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(120, audioCtx.currentTime);
-                osc.frequency.linearRampToValueAtTime(40, audioCtx.currentTime + 0.3);
-                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.35);
-                osc.start(); osc.stop(audioCtx.currentTime + 0.4);
-            } else if (type === 'win') {
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
-                osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1);
-                osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.2);
-                gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
-                osc.start(); osc.stop(audioCtx.currentTime + 0.45);
-            }
-        }
-
-        const svg = document.getElementById('game-svg');
-        const container = document.getElementById('arrows-container');
-        const winScreen = document.getElementById('win-screen');
-        const gameoverScreen = document.getElementById('gameover-screen');
-        const levelIndicator = document.getElementById('level-indicator');
-        const livesContainer = document.getElementById('lives-container');
-
-        let currentLevel = 0;
-        let remainingLives = 3;
-
-        // Harder Handcrafted Maze Levels inspired by your actual gameplay screenshots
-        const HANDCRAFTED_LEVELS = [
-            // Level 1: Complex introductory intersections
-            [
-                { id: 1, dir: "R", path: "M 40 160 L 260 160 L 260 280 L 380 280" },
-                { id: 2, dir: "U", path: "M 160 480 L 160 220 L 60 220" },
-                { id: 3, dir: "D", path: "M 320 100 L 320 420 L 200 420" }
-            ],
-            // Level 2: Real interlocking puzzle matrix (Hard)
-            [
-                { id: 1, dir: "L", path: "M 380 140 L 120 140 L 120 320 L 40 320" },
-                { id: 2, dir: "D", path: "M 200 80 L 200 260 L 340 260 L 340 480" },
-                { id: 3, dir: "U", path: "M 280 520 L 280 360 L 140 360" },
-                { id: 4, dir: "R", path: "M 60 440 L 380 440" }
-            ],
-            // Level 3: Extreme Maze Structure
-            [
-                { id: 1, dir: "D", path: "M 80 100 L 80 500 L 220 500" },
-                { id: 2, dir: "R", path: "M 40 220 L 320 220 L 320 340 L 380 340" },
-                { id: 3, dir: "U", path: "M 180 420 L 180 160 L 360 160" },
-                { id: 4, dir: "L", path: "M 360 280 L 140 280 L 140 400 L 40 400" }
-            ]
-        ];
-
-        function generateUltraHardPuzzleLevel(levelNum) {
-            const levelArrows = [];
-            const count = Math.min(5 + Math.floor(levelNum / 3), 12);
-            const directions = ["R", "L", "U", "D"];
-            
-            for(let i=0; i<count; i++) {
-                let x1 = 40 + Math.floor(Math.random()*6)*60;
-                let y1 = 120 + Math.floor(Math.random()*7)*60;
-                let x2 = 40 + Math.floor(Math.random()*6)*60;
-                let y2 = 120 + Math.floor(Math.random()*7)*60;
-                let x3 = 40 + Math.floor(Math.random()*6)*60;
-                let y3 = 120 + Math.floor(Math.random()*7)*60;
-                
-                const dir = directions[Math.floor(Math.random()*directions.length)];
-                levelArrows.push({
-                    id: i,
-                    dir: dir,
-                    path: `M ${x1} ${y1} L ${x2} ${y2} L ${x3} ${y3}`
-                });
-            }
-            return levelArrows;
-        }
-
-        function updateLivesDisplay() {
-            let hearts = "";
-            for (let i = 0; i < remainingLives; i++) hearts += "❤️";
-            livesContainer.innerText = hearts || "💀 OVER";
-        }
-
-        function loadLevel(index) {
-            container.innerHTML = "";
-            winScreen.style.display = 'none';
-            gameoverScreen.style.display = 'none';
-            levelIndicator.innerText = `Level ${index + 1}`;
-            remainingLives = 3;
-            updateLivesDisplay();
-
-            const data = index < HANDCRAFTED_LEVELS.length ? HANDCRAFTED_LEVELS[index] : generateUltraHardPuzzleLevel(index);
-
-            data.forEach(arrow => {
-                const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
-                g.setAttribute("class", "arrow-group");
-                g.setAttribute("id", `arrow-${arrow.id}`);
-                g.setAttribute("data-dir", arrow.dir);
-
-                const hitbox = document.createElementNS("http://www.w3.org/2000/svg", "path");
-                hitbox.setAttribute("class", "arrow-hitbox");
-                hitbox.setAttribute("d", arrow.path);
-
-                const line = document.createElementNS("http://www.w3.org/2000/svg", "path");
-                line.setAttribute("class", "arrow-line");
-                line.setAttribute("d", arrow.path);
-                line.setAttribute("marker-end", "url(#arrowhead)");
-
-                g.appendChild(hitbox);
-                g.appendChild(line);
-                container.appendChild(g);
-            });
-        }
-
-        function checkPathIntersection(movingPath, stablePath) {
-            const len1 = movingPath.getTotalLength();
-            const len2 = stablePath.getTotalLength();
-            
-            // Fixed accuracy coordinates resolution step
-            for(let i=0; i<=len1; i+=5) {
-                let p1 = movingPath.getPointAtLength(i);
-                for(let j=0; j<=len2; j+=5) {
-                    let p2 = stablePath.getPointAtLength(j);
-                    if(Math.abs(p1.x - p2.x) < 12 && Math.abs(p1.y - p2.y) < 12) {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-
-        function handleArrowTap(group) {
-            initAudio();
-            if (remainingLives <= 0) return;
-
-            const targetLine = group.querySelector('.arrow-line');
-            const otherGroups = Array.from(document.querySelectorAll('.arrow-group')).filter(g => g !== group);
-            
-            let isBlocked = false;
-            for (let other of otherGroups) {
-                if (checkPathIntersection(targetLine, other.querySelector('.arrow-line'))) {
-                    isBlocked = true;
-                    break;
-                }
-            }
-
-            if (!isBlocked) {
-                playSound('tap');
-                // GLITCH FIX: Clear pointer events instantly so it can't double trigger or get stuck
-                group.style.pointerEvents = 'none';
-                
-                const dir = group.getAttribute('data-dir');
-                let tx = 0, ty = 0;
-                if(dir === "R") tx = 650;
-                if(dir === "L") tx = -650;
-                if(dir === "U") ty = -750;
-                if(dir === "D") ty = 750;
-
-                group.style.transform = `translate(${tx}px, ${ty}px)`;
-                group.style.opacity = '0';
-                
-                setTimeout(() => {
-                    group.remove();
-                    if (document.querySelectorAll('.arrow-group').length === 0) {
-                        playSound('win');
-                        winScreen.style.display = 'flex';
-                    }
-                }, 400);
-            } else {
-                playSound('crash');
-                if (navigator.vibrate) navigator.vibrate(100);
-
-                group.classList.add('arrow-error');
-                group.style.transform = 'translate(8px, 0px)';
-                
-                setTimeout(() => group.style.transform = 'translate(-8px, 0px)', 50);
-                setTimeout(() => group.style.transform = 'translate(0px, 0px)', 100);
-                setTimeout(() => group.classList.remove('arrow-error'), 400);
-
-                remainingLives--;
-                updateLivesDisplay();
-                if (remainingLives <= 0) {
-                    setTimeout(() => { gameoverScreen.style.display = 'flex'; }, 300);
-                }
-            }
-        }
-
-        function triggerHint() {
-            initAudio();
-            const groups = Array.from(document.querySelectorAll('.arrow-group'));
-            for (let g of groups) {
-                let line = g.querySelector('.arrow-line');
-                let blocked = false;
-                let others = groups.filter(o => o !== g);
-                for(let o of others) {
-                    if(checkPathIntersection(line, o.querySelector('.arrow-line'))) { blocked = true; break; }
-                }
-                if(!blocked) {
-                    g.style.opacity = '0.3';
-                    setTimeout(() => g.style.opacity = '1', 700);
-                    break;
-                }
-            }
-        }
-
-        function resetCurrentLevel() { loadLevel(currentLevel); }
-        function nextLevel() { currentLevel++; loadLevel(currentLevel); }
-
-        svg.addEventListener('click', (e) => {
-            const g = e.target.closest('.arrow-group');
-            if(g) handleArrowTap(g);
-        });
-        svg.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            const g = e.target.closest('.arrow-group');
-            if(g) handleArrowTap(g);
-        }, { passive: false });
-
-        document.getElementById('refresh-btn').addEventListener('click', resetCurrentLevel);
-        document.getElementById('hint-btn').addEventListener('click', triggerHint);
-
-        loadLevel(currentLevel);
-    </script>
-</body>
-</html>
+                let gain = audioCtx
