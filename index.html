@@ -160,4 +160,223 @@
         <div id="level-indicator">Level 1</div>
         <div class="icon-btn" id="refresh-btn">
             <svg viewBox="0 0 1000 1000">
-                <path d="M500,85c102.5,0,199.3,36.9,275.1,102.6L873.9,89c19.1-19.1,50.1-5.6,50.1,21.5v284.2c0,16.6-13.4,30-30,30H609.8c-27.1,0-40.6-31-21.5-50.1l90.9-90.9C623.5,233,564.1,205,500,205c-162.9,0-295,132.1-29
+                <path d="M500,85c102.5,0,199.3,36.9,275.1,102.6L873.9,89c19.1-19.1,50.1-5.6,50.1,21.5v284.2c0,16.6-13.4,30-30,30H609.8c-27.1,0-40.6-31-21.5-50.1l90.9-90.9C623.5,233,564.1,205,500,205c-162.9,0-295,132.1-295,295c0,42.8,9.2,83.4,25.6,120.3c10,22.6,0.3,49.2-21.7,59.8l-18.7,9c-23,11.1-50.5,1-61-22.1C102.2,615,85,559.5,85,500C85,270.8,270.8,85,500,85z M889.3,316.3c15.1,53,25.7,108.5,25.7,166.4c0,229.2-185.8,415-415,415c-100.8,0-196.1-36-271-99.7l-91.8,91.8c-19.1,19.1-50.1,5.6-50.1-21.5V604.2c0-16.6,13.4-30,30-30h284.2c27.1,0,40.6,31,21.5,50.1l-94,94C401.4,781.4,448.9,795,500,795c162.9,0,295-132.1,295-295c0-45.7-10.5-88.9-29-127.6c-10.2-21.4-1.2-47.4,20-58.4l20.4-10.6C829.3,281.3,858,291,889.3,316.3z"/>
+            </svg>
+        </div>
+    </div>
+
+    <div id="game-container">
+        <div class="grid-bg"></div>
+        
+        <svg id="game-svg" viewBox="0 0 400 580" width="100%" height="100%" style="position: absolute; top:0; left:0;">
+            <defs>
+                <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="4" refY="3" orient="auto">
+                    <polygon points="0 0, 8 3, 0 6" fill="#1f2937"/>
+                </marker>
+            </defs>
+            <g id="arrows-container"></g>
+        </svg>
+
+        <div id="win-screen" class="overlay-screen">
+            <h2 style="margin-bottom: 20px; color: #10b981; font-size: 24px;">Level Cleared! 🎉</h2>
+            <button class="action-btn" onclick="nextLevel()">Next Level</button>
+        </div>
+
+        <div id="gameover-screen" class="overlay-screen">
+            <h2 style="margin-bottom: 20px; color: #ef4444; font-size: 24px;">Game Over! 😢</h2>
+            <button class="action-btn" onclick="resetCurrentLevel()">Try Again</button>
+        </div>
+    </div>
+
+    <script>
+        const svg = document.getElementById('game-svg');
+        const container = document.getElementById('arrows-container');
+        const winScreen = document.getElementById('win-screen');
+        const gameoverScreen = document.getElementById('gameover-screen');
+        const levelIndicator = document.getElementById('level-indicator');
+        const livesContainer = document.getElementById('lives-container');
+
+        let currentLevel = 0;
+        let remainingLives = 3;
+
+        // Hard Handcrafted Puzzle Maze Levels
+        const HANDCRAFTED_LEVELS = [
+            [
+                { id: 1, dir: "R", path: "M 40 160 L 260 160 L 260 280 L 360 280" },
+                { id: 2, dir: "U", path: "M 160 460 L 160 220 L 60 220" },
+                { id: 3, dir: "D", path: "M 310 100 L 310 420 L 200 420" }
+            ],
+            [
+                { id: 1, dir: "L", path: "M 360 140 L 120 140 L 120 320 L 40 320" },
+                { id: 2, dir: "D", path: "M 200 80 L 200 260 L 320 260 L 320 460" },
+                { id: 3, dir: "U", path: "M 260 500 L 260 360 L 140 360" },
+                { id: 4, dir: "R", path: "M 60 420 L 360 420" }
+            ],
+            [
+                { id: 1, dir: "D", path: "M 80 100 L 80 480 L 220 480" },
+                { id: 2, dir: "R", path: "M 40 220 L 300 220 L 300 340 L 360 340" },
+                { id: 3, dir: "U", path: "M 180 400 L 180 160 L 340 160" }
+            ]
+        ];
+
+        function generateUltraHardPuzzleLevel(levelNum) {
+            const levelArrows = [];
+            const count = Math.min(5 + Math.floor(levelNum / 4), 11);
+            const directions = ["R", "L", "U", "D"];
+            
+            for(let i=0; i<count; i++) {
+                let x1 = 40 + Math.floor(Math.random()*5)*65;
+                let y1 = 120 + Math.floor(Math.random()*6)*65;
+                let x2 = 40 + Math.floor(Math.random()*5)*65;
+                let y2 = 120 + Math.floor(Math.random()*6)*65;
+                let x3 = 40 + Math.floor(Math.random()*5)*65;
+                let y3 = 120 + Math.floor(Math.random()*6)*65;
+                
+                const dir = directions[Math.floor(Math.random()*directions.length)];
+                levelArrows.push({
+                    id: i,
+                    dir: dir,
+                    path: `M ${x1} ${y1} L ${x2} ${y2} L ${x3} ${y3}`
+                });
+            }
+            return levelArrows;
+        }
+
+        function updateLivesDisplay() {
+            let hearts = "";
+            for (let i = 0; i < remainingLives; i++) hearts += "❤️";
+            livesContainer.innerText = hearts || "💀 OVER";
+        }
+
+        function loadLevel(index) {
+            container.innerHTML = "";
+            winScreen.style.display = 'none';
+            gameoverScreen.style.display = 'none';
+            levelIndicator.innerText = `Level ${index + 1}`;
+            remainingLives = 3;
+            updateLivesDisplay();
+
+            const data = index < HANDCRAFTED_LEVELS.length ? HANDCRAFTED_LEVELS[index] : generateUltraHardPuzzleLevel(index);
+
+            data.forEach(arrow => {
+                const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+                g.setAttribute("class", "arrow-group");
+                g.setAttribute("data-dir", arrow.dir);
+
+                const hitbox = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                hitbox.setAttribute("class", "arrow-hitbox");
+                hitbox.setAttribute("d", arrow.path);
+
+                const line = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                line.setAttribute("class", "arrow-line");
+                line.setAttribute("d", arrow.path);
+                line.setAttribute("marker-end", "url(#arrowhead)");
+
+                g.appendChild(hitbox);
+                g.appendChild(line);
+                container.appendChild(g);
+            });
+        }
+
+        function checkPathIntersection(movingPath, stablePath) {
+            const len1 = movingPath.getTotalLength();
+            const len2 = stablePath.getTotalLength();
+            for(let i=0; i<=len1; i+=6) {
+                let p1 = movingPath.getPointAtLength(i);
+                for(let j=0; j<=len2; j+=6) {
+                    let p2 = stablePath.getPointAtLength(j);
+                    if(Math.abs(p1.x - p2.x) < 14 && Math.abs(p1.y - p2.y) < 14) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        function handleArrowTap(group) {
+            if (remainingLives <= 0) return;
+
+            const targetLine = group.querySelector('.arrow-line');
+            const otherGroups = Array.from(document.querySelectorAll('.arrow-group')).filter(g => g !== group);
+            
+            let isBlocked = false;
+            for (let other of otherGroups) {
+                if (checkPathIntersection(targetLine, other.querySelector('.arrow-line'))) {
+                    isBlocked = true;
+                    break;
+                }
+            }
+
+            if (!isBlocked) {
+                group.style.pointerEvents = 'none'; 
+                const dir = group.getAttribute('data-dir');
+                let tx = 0, ty = 0;
+                if(dir === "R") tx = 600;
+                if(dir === "L") tx = -600;
+                if(dir === "U") ty = -700;
+                if(dir === "D") ty = 700;
+
+                group.style.transform = `translate(${tx}px, ${ty}px)`;
+                group.style.opacity = '0';
+                
+                setTimeout(() => {
+                    group.remove();
+                    if (document.querySelectorAll('.arrow-group').length === 0) {
+                        winScreen.style.display = 'flex';
+                    }
+                }, 400);
+            } else {
+                if (navigator.vibrate) navigator.vibrate(80);
+
+                group.classList.add('arrow-error');
+                group.style.transform = 'translate(6px, 0px)';
+                
+                setTimeout(() => group.style.transform = 'translate(-6px, 0px)', 50);
+                setTimeout(() => group.style.transform = 'translate(0px, 0px)', 100);
+                setTimeout(() => group.classList.remove('arrow-error'), 400);
+
+                remainingLives--;
+                updateLivesDisplay();
+                if (remainingLives <= 0) {
+                    setTimeout(() => { gameoverScreen.style.display = 'flex'; }, 300);
+                }
+            }
+        }
+
+        function triggerHint() {
+            const groups = Array.from(document.querySelectorAll('.arrow-group'));
+            for (let g of groups) {
+                let line = g.querySelector('.arrow-line');
+                let blocked = false;
+                let others = groups.filter(o => o !== g);
+                for(let o of others) {
+                    if(checkPathIntersection(line, o.querySelector('.arrow-line'))) { blocked = true; break; }
+                }
+                if(!blocked) {
+                    g.style.opacity = '0.3';
+                    setTimeout(() => g.style.opacity = '1', 700);
+                    break;
+                }
+            }
+        }
+
+        function resetCurrentLevel() { loadLevel(currentLevel); }
+        function nextLevel() { currentLevel++; loadLevel(currentLevel); }
+
+        svg.addEventListener('click', (e) => {
+            const g = e.target.closest('.arrow-group');
+            if(g) handleArrowTap(g);
+        });
+        svg.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            const g = e.target.closest('.arrow-group');
+            if(g) handleArrowTap(g);
+        }, { passive: false });
+
+        document.getElementById('refresh-btn').addEventListener('click', resetCurrentLevel);
+        document.getElementById('hint-btn').addEventListener('click', triggerHint);
+
+        loadLevel(currentLevel);
+    </script>
+</body>
+</html>
