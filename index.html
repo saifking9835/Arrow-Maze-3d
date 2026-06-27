@@ -28,6 +28,15 @@
             margin-bottom: 5px;
         }
         
+        /* Hearts/Life Display */
+        #lives-container {
+            display: flex;
+            gap: 5px;
+            font-size: 22px;
+            margin-bottom: 10px;
+            height: 30px;
+        }
+
         .controls-row {
             display: flex;
             justify-content: space-between;
@@ -102,17 +111,18 @@
         
         @keyframes hint-glow {
             0% { stroke: #1e272e; stroke-width: 6; }
-            50% { stroke: #e74c3c; stroke-width: 12; }
+            50% { stroke: #2ecc71; stroke-width: 12; }
             100% { stroke: #1e272e; stroke-width: 6; }
         }
         .hint-active .arrow-line {
-            animation: hint-glow 0.6s ease-in-out 3;
+            animation: hint-glow 0.5s ease-in-out 3;
         }
 
-        #win-screen {
+        /* Modals/Overlays */
+        .overlay-screen {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255, 255, 255, 0.96);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -137,6 +147,8 @@
 
     <h1>Arrows</h1>
     
+    <div id="lives-container">❤️❤️❤️</div>
+    
     <div class="controls-row">
         <div class="icon-btn" id="hint-btn">💡</div>
         <div id="level-indicator">Level 1</div>
@@ -155,9 +167,14 @@
             <g id="arrows-container"></g>
         </svg>
 
-        <div id="win-screen">
+        <div id="win-screen" class="overlay-screen">
             <h2 id="win-title" style="margin-bottom: 20px; color: #2ecc71;">Level Cleared! 🎉</h2>
             <button class="action-btn" id="action-btn" onclick="nextLevel()">Next Level</button>
+        </div>
+
+        <div id="gameover-screen" class="overlay-screen">
+            <h2 style="margin-bottom: 20px; color: #e74c3c;">Game Over! 😢</h2>
+            <button class="action-btn" onclick="resetCurrentLevel()">Try Again</button>
         </div>
     </div>
 
@@ -165,7 +182,9 @@
         const svg = document.getElementById('game-svg');
         const container = document.getElementById('arrows-container');
         const winScreen = document.getElementById('win-screen');
+        const gameoverScreen = document.getElementById('gameover-screen');
         const levelIndicator = document.getElementById('level-indicator');
+        const livesContainer = document.getElementById('lives-container');
         const actionBtn = document.getElementById('action-btn');
         const winTitle = document.getElementById('win-title');
 
@@ -173,8 +192,10 @@
         const BOARD_HEIGHT = 480;
         
         let currentLevel = 0;
+        let maxLives = 3;
+        let remainingLives = maxLives;
 
-        // Perfect coordinate gap sizing for no freeze/jam
+        // Perfectly layered configuration so levels don't jam up at start
         const ALL_LEVELS = [
             // Level 1
             [
@@ -183,13 +204,13 @@
                 { id: "a3", dir: "D", path: "M 180 180 L 260 180 L 260 300" },
                 { id: "a4", dir: "L", path: "M 300 390 L 60 390" }
             ],
-            // Level 2 (Safer Intersection gaps)
+            // Level 2 (Matching original geometry perfectly)
             [
-                { id: "b1", dir: "U", path: "M 70 420 L 70 110" },
-                { id: "b2", dir: "R", path: "M 40 260 L 320 260" },
-                { id: "b3", dir: "L", path: "M 320 170 L 120 170" },
-                { id: "b4", dir: "D", path: "M 230 70 L 230 360" },
-                { id: "b5", dir: "R", path: "M 90 350 L 300 350" }
+                { id: "b1", dir: "U", path: "M 75 410 L 75 145" },
+                { id: "b2", dir: "R", path: "M 55 265 L 315 265" },
+                { id: "b3", dir: "L", path: "M 315 175 L 125 175" },
+                { id: "b4", dir: "D", path: "M 225 75 L 225 355" },
+                { id: "b5", dir: "R", path: "M 105 345 L 295 345" }
             ],
             // Level 3
             [
@@ -202,10 +223,22 @@
             ]
         ];
 
+        function updateLivesDisplay() {
+            let hearts = "";
+            for (let i = 0; i < remainingLives; i++) {
+                hearts += "❤️";
+            }
+            if (hearts === "") hearts = "💀 Game Over";
+            livesContainer.innerText = hearts;
+        }
+
         function loadLevel(levelIndex) {
             container.innerHTML = "";
             winScreen.style.display = 'none';
+            gameoverScreen.style.display = 'none';
             levelIndicator.innerText = `Level ${levelIndex + 1}`;
+            remainingLives = maxLives;
+            updateLivesDisplay();
 
             const levelData = ALL_LEVELS[levelIndex];
             levelData.forEach(arrow => {
@@ -228,58 +261,52 @@
             });
         }
 
-        function isColliding(path1, path2) {
-            const len1 = path1.getTotalLength();
-            const len2 = path2.getTotalLength();
-            for (let i = 0; i <= len1; i += 5) {
-                const pt1 = path1.getPointAtLength(i);
-                for (let j = 0; j <= len2; j += 5) {
-                    const pt2 = path2.getPointAtLength(j);
-                    if (Math.abs(pt1.x - pt2.x) < 12 && Math.abs(pt1.y - pt2.y) < 12) {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
+        // True Raycast Algorithm: Only blocks if TIP points directly onto another active line
+        function testEscapePath(group) {
+            if (remainingLives <= 0) return { isBlocked: true };
 
-        function checkEscapePossibility(group) {
             const direction = group.getAttribute('data-dir');
             const mainLine = group.querySelector('.arrow-line');
-            
-            const ghostPath = mainLine.cloneNode(true);
-            svg.appendChild(ghostPath);
-
-            let translationX = 0, translationY = 0;
-            if (direction === 'R') translationX = BOARD_WIDTH;
-            if (direction === 'L') translationX = -BOARD_WIDTH;
-            if (direction === 'U') translationY = -BOARD_HEIGHT;
-            if (direction === 'D') translationY = BOARD_HEIGHT;
-
-            ghostPath.setAttribute('transform', `translate(${translationX}, ${translationY})`);
+            const totalLen = mainLine.getTotalLength();
+            const tipPoint = mainLine.getPointAtLength(totalLen); // Exact coordinates of Arrow Head Tip
 
             const otherGroups = Array.from(document.querySelectorAll('.arrow-group')).filter(g => g !== group);
             let isBlocked = false;
 
+            // Check if arrow tip hits ANY active line during forward movement
             for (let other of otherGroups) {
                 const otherLine = other.querySelector('.arrow-line');
-                if (isColliding(ghostPath, otherLine)) {
-                    isBlocked = true;
-                    break;
+                const otherLen = otherLine.getTotalLength();
+
+                for (let j = 0; j <= otherLen; j += 4) {
+                    const pt = otherLine.getPointAtLength(j);
+                    
+                    if (direction === 'R' && pt.y > tipPoint.y - 8 && pt.y < tipPoint.y + 8 && pt.x > tipPoint.x) isBlocked = true;
+                    if (direction === 'L' && pt.y > tipPoint.y - 8 && pt.y < tipPoint.y + 8 && pt.x < tipPoint.x) isBlocked = true;
+                    if (direction === 'U' && pt.x > tipPoint.x - 8 && pt.x < tipPoint.x + 8 && pt.y < tipPoint.y) isBlocked = true;
+                    if (direction === 'D' && pt.x > tipPoint.x - 8 && pt.x < tipPoint.x + 8 && pt.y > tipPoint.y) isBlocked = true;
+
+                    if (isBlocked) break;
                 }
+                if (isBlocked) break;
             }
 
-            ghostPath.remove();
-            return { isBlocked, translationX, translationY };
+            let tx = 0, ty = 0;
+            if (direction === 'R') tx = BOARD_WIDTH;
+            if (direction === 'L') tx = -BOARD_WIDTH;
+            if (direction === 'U') ty = -BOARD_HEIGHT;
+            if (direction === 'D') ty = BOARD_HEIGHT;
+
+            return { isBlocked, tx, ty };
         }
 
         function handleArrowClick(clickedGroup) {
-            if (!clickedGroup || !clickedGroup.classList.contains('arrow-group')) return;
+            if (!clickedGroup || remainingLives <= 0) return;
 
-            const assessment = checkEscapePossibility(clickedGroup);
+            const assessment = testEscapePath(clickedGroup);
 
             if (!assessment.isBlocked) {
-                clickedGroup.style.transform = `translate(${assessment.translationX}px, ${assessment.translationY}px)`;
+                clickedGroup.style.transform = `translate(${assessment.tx}px, ${assessment.ty}px)`;
                 clickedGroup.style.opacity = '0';
                 clickedGroup.style.pointerEvents = 'none';
                 setTimeout(() => {
@@ -287,25 +314,37 @@
                     checkWin();
                 }, 400);
             } else {
-                clickedGroup.style.transform = 'translate(10px, 0px)';
-                setTimeout(() => clickedGroup.style.transform = 'translate(-10px, 0px)', 60);
+                // Shake FeedBack
+                clickedGroup.style.transform = 'translate(8px, 0px)';
+                setTimeout(() => clickedGroup.style.transform = 'translate(-8px, 0px)', 60);
                 setTimeout(() => clickedGroup.style.transform = 'translate(0px, 0px)', 120);
+
+                // Lose a Life
+                remainingLives--;
+                updateLivesDisplay();
+                if (remainingLives <= 0) {
+                    setTimeout(() => { gameoverScreen.style.display = 'flex'; }, 300);
+                }
             }
         }
 
         function showHint() {
             const groups = Array.from(document.querySelectorAll('.arrow-group'));
             for (let group of groups) {
-                const check = checkEscapePossibility(group);
+                const check = testEscapePath(group);
                 if (!check.isBlocked) {
                     group.classList.add('hint-active');
-                    setTimeout(() => group.classList.remove('hint-active'), 1800);
+                    setTimeout(() => group.classList.remove('hint-active'), 1500);
                     return; 
                 }
             }
         }
 
-        // Standard event wrapper for reliable touch trigger
+        function resetCurrentLevel() {
+            loadLevel(currentLevel);
+        }
+
+        // High responsiveness mobile touch listeners
         svg.addEventListener('touchstart', (e) => {
             e.preventDefault();
             const group = e.target.closest('.arrow-group');
@@ -317,18 +356,11 @@
             if (group) handleArrowClick(group);
         });
 
-        // Safe explicit touch handler for top bar buttons
-        document.getElementById('hint-btn').addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            showHint();
-        });
+        document.getElementById('hint-btn').addEventListener('touchstart', (e) => { e.preventDefault(); showHint(); });
         document.getElementById('hint-btn').addEventListener('click', showHint);
 
-        document.getElementById('refresh-btn').addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            loadLevel(currentLevel);
-        });
-        document.getElementById('refresh-btn').addEventListener('click', () => loadLevel(currentLevel));
+        document.getElementById('refresh-btn').addEventListener('touchstart', (e) => { e.preventDefault(); resetCurrentLevel(); });
+        document.getElementById('refresh-btn').addEventListener('click', resetCurrentLevel);
 
         function checkWin() {
             if (document.querySelectorAll('.arrow-group').length === 0) {
