@@ -28,13 +28,12 @@
             margin-bottom: 5px;
         }
         
-        /* Top Navigation/Controls Row */
         .controls-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
             width: 360px;
-            padding: 0 10px;
+            padding: 0 15px;
             margin-bottom: 15px;
         }
         #level-indicator {
@@ -46,22 +45,21 @@
             background: white;
             border: 2px solid #dfe6e9;
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
+            width: 44px;
+            height: 44px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
+            font-size: 20px;
             cursor: pointer;
             box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            transition: transform 0.1s, background-color 0.2s;
+            touch-action: manipulation;
         }
         .icon-btn:active {
             transform: scale(0.9);
             background-color: #f1f2f6;
         }
 
-        /* Game Board */
         #game-container {
             position: relative;
             width: 360px;
@@ -83,8 +81,7 @@
         }
         .arrow-group {
             cursor: pointer;
-            pointer-events: auto;
-            transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s;
+            transition: transform 0.4s ease-out, opacity 0.4s;
         }
         .arrow-line {
             fill: none;
@@ -97,25 +94,21 @@
         .arrow-hitbox {
             fill: none;
             stroke: transparent;
-            stroke-width: 35; 
+            stroke-width: 40; 
             stroke-linecap: round;
             stroke-linejoin: round;
             cursor: pointer;
         }
         
-        /* Highlight hint animation */
         @keyframes hint-glow {
-            0% { stroke: #5c67f2; stroke-width: 10; }
-            50% { stroke: #e74c3c; stroke-width: 14; }
-            100% { stroke: #5c67f2; stroke-width: 10; }
+            0% { stroke: #1e272e; stroke-width: 6; }
+            50% { stroke: #e74c3c; stroke-width: 12; }
+            100% { stroke: #1e272e; stroke-width: 6; }
         }
         .hint-active .arrow-line {
-            animation: hint-glow 0.8s ease-in-out 2;
+            animation: hint-glow 0.6s ease-in-out 3;
         }
 
-        .arrow-group:active .arrow-line {
-            stroke: #5c67f2;
-        }
         #win-screen {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -145,9 +138,9 @@
     <h1>Arrows</h1>
     
     <div class="controls-row">
-        <button class="icon-btn" onclick="showHint()" title="Hint/Idea">💡</button>
+        <div class="icon-btn" id="hint-btn">💡</div>
         <div id="level-indicator">Level 1</div>
-        <button class="icon-btn" onclick="resetCurrentLevel()" title="Refresh Level">🔄</button>
+        <div class="icon-btn" id="refresh-btn">🔄</div>
     </div>
 
     <div id="game-container">
@@ -181,7 +174,7 @@
         
         let currentLevel = 0;
 
-        // Upgraded Level configurations with safer spacing coordinates
+        // Perfect coordinate gap sizing for no freeze/jam
         const ALL_LEVELS = [
             // Level 1
             [
@@ -190,22 +183,22 @@
                 { id: "a3", dir: "D", path: "M 180 180 L 260 180 L 260 300" },
                 { id: "a4", dir: "L", path: "M 300 390 L 60 390" }
             ],
-            // Level 2 (Fixed & Corrected Layout)
+            // Level 2 (Safer Intersection gaps)
             [
-                { id: "b1", dir: "U", path: "M 70 420 L 70 140" },
-                { id: "b2", dir: "R", path: "M 50 250 L 310 250" },
-                { id: "b3", dir: "L", path: "M 310 180 L 130 180" },
-                { id: "b4", dir: "D", path: "M 230 100 L 230 350" },
-                { id: "b5", dir: "R", path: "M 110 320 L 290 320" }
+                { id: "b1", dir: "U", path: "M 70 420 L 70 110" },
+                { id: "b2", dir: "R", path: "M 40 260 L 320 260" },
+                { id: "b3", dir: "L", path: "M 320 170 L 120 170" },
+                { id: "b4", dir: "D", path: "M 230 70 L 230 360" },
+                { id: "b5", dir: "R", path: "M 90 350 L 300 350" }
             ],
             // Level 3
             [
                 { id: "c1", dir: "R", path: "M 40 100 L 320 100" },
                 { id: "c2", dir: "D", path: "M 80 60 L 80 220 L 200 220" },
-                { id: "c3", dir: "L", path: "M 290 160 L 140 160" },
+                { id: "c3", dir: "L", path: "M 290 150 L 140 150" },
                 { id: "c4", dir: "U", path: "M 160 420 L 160 290" },
-                { id: "c5", dir: "D", path: "M 270 140 L 270 400" },
-                { id: "c6", dir: "L", path: "M 320 360 L 60 360" }
+                { id: "c5", dir: "D", path: "M 270 130 L 270 400" },
+                { id: "c6", dir: "L", path: "M 320 370 L 60 370" }
             ]
         ];
 
@@ -238,12 +231,11 @@
         function isColliding(path1, path2) {
             const len1 = path1.getTotalLength();
             const len2 = path2.getTotalLength();
-            // High-precision geometric sweep check
-            for (let i = 0; i <= len1; i += 4) {
+            for (let i = 0; i <= len1; i += 5) {
                 const pt1 = path1.getPointAtLength(i);
-                for (let j = 0; j <= len2; j += 4) {
+                for (let j = 0; j <= len2; j += 5) {
                     const pt2 = path2.getPointAtLength(j);
-                    if (Math.abs(pt1.x - pt2.x) < 8 && Math.abs(pt1.y - pt2.y) < 8) {
+                    if (Math.abs(pt1.x - pt2.x) < 12 && Math.abs(pt1.y - pt2.y) < 12) {
                         return true;
                     }
                 }
@@ -295,31 +287,25 @@
                     checkWin();
                 }, 400);
             } else {
-                // Shake feedback
-                clickedGroup.style.transform = 'translate(8px, 0px)';
-                setTimeout(() => clickedGroup.style.transform = 'translate(-8px, 0px)', 60);
+                clickedGroup.style.transform = 'translate(10px, 0px)';
+                setTimeout(() => clickedGroup.style.transform = 'translate(-10px, 0px)', 60);
                 setTimeout(() => clickedGroup.style.transform = 'translate(0px, 0px)', 120);
             }
         }
 
-        // Hint System Logic
         function showHint() {
             const groups = Array.from(document.querySelectorAll('.arrow-group'));
             for (let group of groups) {
                 const check = checkEscapePossibility(group);
                 if (!check.isBlocked) {
                     group.classList.add('hint-active');
-                    setTimeout(() => group.classList.remove('hint-active'), 1600);
+                    setTimeout(() => group.classList.remove('hint-active'), 1800);
                     return; 
                 }
             }
         }
 
-        function resetCurrentLevel() {
-            loadLevel(currentLevel);
-        }
-
-        // Touch & Click Listeners
+        // Standard event wrapper for reliable touch trigger
         svg.addEventListener('touchstart', (e) => {
             e.preventDefault();
             const group = e.target.closest('.arrow-group');
@@ -330,6 +316,19 @@
             const group = e.target.closest('.arrow-group');
             if (group) handleArrowClick(group);
         });
+
+        // Safe explicit touch handler for top bar buttons
+        document.getElementById('hint-btn').addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            showHint();
+        });
+        document.getElementById('hint-btn').addEventListener('click', showHint);
+
+        document.getElementById('refresh-btn').addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            loadLevel(currentLevel);
+        });
+        document.getElementById('refresh-btn').addEventListener('click', () => loadLevel(currentLevel));
 
         function checkWin() {
             if (document.querySelectorAll('.arrow-group').length === 0) {
@@ -354,7 +353,6 @@
             }
         }
 
-        // Start Game
         loadLevel(currentLevel);
     </script>
 </body>
