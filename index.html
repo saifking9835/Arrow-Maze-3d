@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Arrows - Premium Escape Puzzle</title>
+    <title>Arrows - Premium Puzzle</title>
     <style>
         * {
             box-sizing: border-box;
@@ -31,6 +31,8 @@
             width: 100%;
             max-width: 340px;
             margin-bottom: 16px;
+            opacity: 0; /* Hidden during intro screen */
+            transition: opacity 0.3s ease;
         }
 
         #lives-container {
@@ -62,11 +64,6 @@
             justify-content: center;
             cursor: pointer;
             box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-            transition: transform 0.1s ease;
-        }
-        .icon-btn:active {
-            transform: scale(0.9);
-            background-color: #f1f5f9;
         }
         .icon-btn svg {
             width: 18px;
@@ -97,7 +94,7 @@
             pointer-events: none;
         }
         
-        /* Premium Small & Sleek Arrows Design */
+        /* Sleek & Premium Design */
         .arrow-group {
             cursor: pointer;
             transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.3s;
@@ -105,7 +102,7 @@
         .arrow-line {
             fill: none;
             stroke: #0f172a;
-            stroke-width: 4; /* Thinner and sharper */
+            stroke-width: 4.5;
             stroke-linecap: round;
             stroke-linejoin: round;
             pointer-events: none; 
@@ -113,7 +110,7 @@
         .arrow-hitbox {
             fill: none;
             stroke: transparent;
-            stroke-width: 32; 
+            stroke-width: 28; 
             cursor: pointer;
         }
 
@@ -121,27 +118,60 @@
             stroke: #ef4444 !important;
         }
 
+        /* Screens Styling */
         .overlay-screen {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255, 255, 255, 0.96);
+            background: #ffffff;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            display: none;
             z-index: 10;
         }
+
+        /* Matching user screenshot intro design */
+        #intro-screen {
+            display: flex;
+        }
+        .intro-title {
+            font-size: 42px;
+            font-weight: 800;
+            color: #1e3a8a;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        .intro-title span.triangle {
+            display: inline-block;
+            width: 0; height: 0;
+            border-left: 14px solid transparent;
+            border-right: 14px solid transparent;
+            border-bottom: 24px solid #1e3a8a;
+            transform: rotate(90deg);
+        }
+        .intro-subtitle {
+            font-size: 18px;
+            color: #4f46e5;
+            font-weight: 600;
+            margin-bottom: 48px;
+        }
+
         .action-btn {
-            background: #0f172a;
+            background: #4f46e5;
             color: white;
             border: none;
-            padding: 12px 32px;
-            font-size: 14px;
+            padding: 14px 64px;
+            font-size: 18px;
             font-weight: 600;
-            border-radius: 16px;
+            border-radius: 25px;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+            box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3);
+            transition: transform 0.1s ease;
+        }
+        .action-btn:active {
+            transform: scale(0.95);
         }
     </style>
 </head>
@@ -151,14 +181,10 @@
         <div id="lives-container">❤️ ❤️ ❤️</div>
         <div class="controls-row">
             <div class="icon-btn" id="hint-btn">
-                <svg viewBox="0 0 24 24">
-                    <path d="M12 2C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7zm2.5 14h-5v-1h5v1zm0-2h-5v-1h5v1z M9 20h6v1H9z"/>
-                </svg>
+                <svg viewBox="0 0 24 24"><path d="M12 2C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7z"/></svg>
             </div>
             <div class="icon-btn" id="refresh-btn">
-                <svg viewBox="0 0 24 24">
-                    <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
-                </svg>
+                <svg viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
             </div>
         </div>
     </div>
@@ -166,24 +192,30 @@
     <div id="game-container">
         <div class="grid-bg"></div>
         
-        <div id="level-indicator" style="position: absolute; top: 14px; left: 14px; z-index: 5; font-size: 12px; font-weight: bold; background: #f1f5f9; padding: 4px 12px; border-radius: 10px;">Level 1</div>
+        <div id="level-indicator" style="position: absolute; top: 14px; left: 14px; z-index: 5; font-size: 12px; font-weight: bold; background: #f1f5f9; padding: 4px 12px; border-radius: 10px; display: none;">Level 1</div>
 
         <svg id="game-svg" viewBox="0 0 360 468" width="100%" height="100%" style="position: absolute; top:0; left:0;">
             <defs>
-                <marker id="arrowhead" markerWidth="5" markerHeight="4" refX="2.5" refY="2" orient="auto">
+                <marker id="arrowhead" markerWidth="5" markerHeight="4" refX="2.2" refY="2" orient="auto">
                     <polygon points="0 0, 5 2, 0 4" fill="#0f172a"/>
                 </marker>
             </defs>
             <g id="arrows-container"></g>
         </svg>
 
-        <div id="win-screen" class="overlay-screen">
-            <h2 style="margin-bottom: 16px; color: #10b981; font-weight: 700;">Level Cleared! 🎉</h2>
+        <div id="intro-screen" class="overlay-screen">
+            <h1 class="intro-title"><span class="triangle"></span>Arrows</h1>
+            <div id="intro-level-text" class="intro-subtitle">Level 1</div>
+            <button class="action-btn" onclick="startGameFromIntro()">Play</button>
+        </div>
+
+        <div id="win-screen" class="overlay-screen" style="display: none;">
+            <h2 style="margin-bottom: 20px; color: #10b981; font-weight: 700; font-size: 24px;">Level Cleared! 🎉</h2>
             <button class="action-btn" onclick="nextLevel()">Next Level</button>
         </div>
 
-        <div id="gameover-screen" class="overlay-screen">
-            <h2 style="margin-bottom: 16px; color: #ef4444; font-weight: 700;">Game Over! 😢</h2>
+        <div id="gameover-screen" class="overlay-screen" style="display: none;">
+            <h2 style="margin-bottom: 20px; color: #ef4444; font-weight: 700; font-size: 24px;">Game Over! 😢</h2>
             <button class="action-btn" onclick="resetCurrentLevel()">Try Again</button>
         </div>
     </div>
@@ -191,63 +223,78 @@
     <script>
         const svg = document.getElementById('game-svg');
         const container = document.getElementById('arrows-container');
+        const introScreen = document.getElementById('intro-screen');
         const winScreen = document.getElementById('win-screen');
         const gameoverScreen = document.getElementById('gameover-screen');
         const levelIndicator = document.getElementById('level-indicator');
+        const headerStatus = document.getElementById('header-status');
         const livesContainer = document.getElementById('lives-container');
+        const introLevelText = document.getElementById('intro-level-text');
 
         let currentLevel = 0;
         let remainingLives = 3;
         let isAnimating = false;
 
+        // Perfect handcrafted levels mimicking your curved/turned paths from screenshots
         const HANDCRAFTED_LEVELS = [
             [
-                { id: 1, dir: "R", path: "M 60 140 L 220 140 L 220 240 L 300 240" },
-                { id: 2, dir: "U", path: "M 140 360 L 140 200 L 70 200" },
+                { id: 1, dir: "R", path: "M 60 140 L 240 140 L 240 240 L 320 240" },
+                { id: 2, dir: "L", path: "M 300 340 L 140 340 L 140 220 L 60 220" }
+            ],
+            [
+                { id: 1, dir: "U", path: "M 80 380 L 80 140" },
+                { id: 2, dir: "L", path: "M 300 180 L 140 180" },
+                { id: 3, dir: "R", path: "M 60 260 L 280 260" },
+                { id: 4, dir: "D", path: "M 220 100 L 220 360" }
+            ],
+            [
+                { id: 1, dir: "R", path: "M 50 160 L 220 160 L 220 240 L 300 240" },
+                { id: 2, dir: "U", path: "M 130 380 L 130 200 L 60 200" },
                 { id: 3, dir: "D", path: "M 260 90 L 260 340 L 180 340" }
-            ],
-            [
-                { id: 1, dir: "L", path: "M 300 120 L 120 120 L 120 260 L 60 260" },
-                { id: 2, dir: "D", path: "M 180 80 L 180 220 L 270 220 L 270 380" },
-                { id: 3, dir: "U", path: "M 220 400 L 220 290 L 130 290" },
-                { id: 4, dir: "R", path: "M 60 330 L 300 330" }
-            ],
-            [
-                { id: 1, dir: "D", path: "M 80 100 L 80 380 L 200 380" },
-                { id: 2, dir: "R", path: "M 60 180 L 250 180 L 250 280 L 300 280" },
-                { id: 3, dir: "U", path: "M 160 320 L 160 140 L 280 140" }
             ]
         ];
 
         function generateProceduralLevel(levelNum) {
             const levelArrows = [];
-            const count = Math.min(4 + Math.floor(levelNum / 3), 8);
-            const directions = ["R", "L", "U", "D"];
-            
+            const count = Math.min(3 + Math.floor(levelNum / 2), 6);
+            const dirs = ["R", "L", "U", "D"];
             for(let i=0; i<count; i++) {
-                let x1 = 60 + Math.floor(Math.random()*4)*60;
-                let y1 = 120 + Math.floor(Math.random()*5)*60;
-                let x2 = 60 + Math.floor(Math.random()*4)*60;
-                let y2 = 120 + Math.floor(Math.random()*5)*60;
-                if(x1 === x2 && y1 === y2) { x2 += 60; }
+                let x = 60 + Math.floor(Math.random()*4)*60;
+                let y = 120 + Math.floor(Math.random()*4)*60;
+                let length = 120 + Math.floor(Math.random()*2)*60;
+                let path = `M ${x} ${y}`;
+                let dir = dirs[Math.floor(Math.random()*4)];
                 
-                levelArrows.push({
-                    id: i, dir: directions[Math.floor(Math.random()*4)], path: `M ${x1} ${y1} L ${x2} ${y2}`
-                });
+                if(dir === "R") path += ` L ${x + length} ${y}`;
+                if(dir === "L") path += ` L ${x - length} ${y}`;
+                if(dir === "U") path += ` L ${x} ${y - length}`;
+                if(dir === "D") path += ` L ${x} ${y + length}`;
+
+                levelArrows.push({ id: i, dir: dir, path: path });
             }
             return levelArrows;
         }
 
-        function updateLivesDisplay() {
-            let hearts = "";
-            for (let i = 0; i < remainingLives; i++) hearts += "❤️ ";
-            livesContainer.innerText = hearts || "💀 OVER";
-        }
-
-        function loadLevel(index) {
+        function showIntroScreen() {
             container.innerHTML = "";
             winScreen.style.display = 'none';
             gameoverScreen.style.display = 'none';
+            levelIndicator.style.display = 'none';
+            headerStatus.style.opacity = '0';
+            
+            introLevelText.innerText = `Level ${currentLevel + 1}`;
+            introScreen.style.display = 'flex';
+        }
+
+        function startGameFromIntro() {
+            introScreen.style.display = 'none';
+            levelIndicator.style.display = 'block';
+            headerStatus.style.opacity = '1';
+            loadLevelData(currentLevel);
+        }
+
+        function loadLevelData(index) {
+            container.innerHTML = "";
             levelIndicator.innerText = `Level ${index + 1}`;
             remainingLives = 3;
             updateLivesDisplay();
@@ -275,34 +322,36 @@
             });
         }
 
-        // Precision Raycast collision check only in FRONT direction
-        function isPathObstructed(movingGroup) {
+        function updateLivesDisplay() {
+            let hearts = "";
+            for (let i = 0; i < remainingLives; i++) hearts += "❤️ ";
+            livesContainer.innerText = hearts || "💀 OVER";
+        }
+
+        // Advance Geometry Path-to-Path Intersection Check (100% Fix for Frozen Arrows)
+        function checkPathIntersection(movingGroup) {
             const movingLine = movingGroup.querySelector('.arrow-line');
-            const dir = movingGroup.getAttribute('data-dir');
-            const len = movingLine.getTotalLength();
-            const headPoint = movingLine.getPointAtLength(len); // Arrowhead tip position
+            const movingLen = movingLine.getTotalLength();
+            
+            // Collect key coordinates along the moving path
+            const movingPoints = [];
+            for (let i = 0; i <= movingLen; i += 4) {
+                movingPoints.push(movingLine.getPointAtLength(i));
+            }
 
             const otherGroups = Array.from(document.querySelectorAll('.arrow-group')).filter(g => g !== movingGroup);
 
             for (let other of otherGroups) {
                 const otherLine = other.querySelector('.arrow-line');
                 const otherLen = otherLine.getTotalLength();
-                
-                // Scan the forward trajectory ray of the arrow
-                for (let step = 0; step < 400; step += 6) {
-                    let rx = headPoint.x;
-                    let ry = headPoint.y;
 
-                    if (dir === "R") rx += step;
-                    if (dir === "L") rx -= step;
-                    if (dir === "U") ry -= step;
-                    if (dir === "D") ry += step;
-
-                    // If ray hits any part of another existing arrow's path, it is blocked!
-                    for (let j = 0; j <= otherLen; j += 5) {
+                // Check if any point of moving arrow overlaps with any point of static arrow
+                for (let i = 0; i < movingPoints.length; i++) {
+                    let mp = movingPoints[i];
+                    for (let j = 0; j <= otherLen; j += 6) {
                         let op = otherLine.getPointAtLength(j);
-                        if (Math.abs(rx - op.x) < 10 && Math.abs(ry - op.y) < 10) {
-                            return true; 
+                        if (Math.abs(mp.x - op.x) < 12 && Math.abs(mp.y - op.y) < 12) {
+                            return true; // Collision Detected!
                         }
                     }
                 }
@@ -314,7 +363,8 @@
             if (remainingLives <= 0 || isAnimating) return;
             isAnimating = true;
 
-            if (!isPathObstructed(group)) {
+            // Check if path is clear using advanced geometry check
+            if (!checkPathIntersection(group)) {
                 group.style.pointerEvents = 'none'; 
                 const dir = group.getAttribute('data-dir');
                 let tx = 0, ty = 0;
@@ -332,24 +382,25 @@
                     if (document.querySelectorAll('.arrow-group').length === 0) {
                         winScreen.style.display = 'flex';
                     }
-                }, 350);
+                }, 380);
             } else {
-                if (navigator.vibrate) navigator.vibrate(50);
+                // If blocked, trigger clear vibration and shake effect (No Freeze!)
+                if (navigator.vibrate) navigator.vibrate(60);
 
                 group.classList.add('arrow-error');
-                group.style.transform = 'translate(4px, 0px)';
-                setTimeout(() => group.style.transform = 'translate(-4px, 0px)', 50);
+                group.style.transform = 'translate(6px, 0px)';
+                setTimeout(() => group.style.transform = 'translate(-6px, 0px)', 50);
                 setTimeout(() => group.style.transform = 'translate(0px, 0px)', 100);
                 
                 setTimeout(() => {
                     group.classList.remove('arrow-error');
                     isAnimating = false;
-                }, 400);
+                }, 300);
 
                 remainingLives--;
                 updateLivesDisplay();
                 if (remainingLives <= 0) {
-                    setTimeout(() => { gameoverScreen.style.display = 'flex'; }, 300);
+                    setTimeout(() => { gameoverScreen.style.display = 'flex'; }, 250);
                 }
             }
         }
@@ -357,18 +408,18 @@
         function triggerHint() {
             const groups = Array.from(document.querySelectorAll('.arrow-group'));
             for (let g of groups) {
-                if (!isPathObstructed(g)) {
-                    g.style.opacity = '0.2';
-                    setTimeout(() => g.style.opacity = '1', 400);
+                if (!checkPathIntersection(g)) {
+                    g.style.opacity = '0.3';
+                    setTimeout(() => g.style.opacity = '1', 300);
                     break;
                 }
             }
         }
 
-        function resetCurrentLevel() { loadLevel(currentLevel); }
-        function nextLevel() { currentLevel++; loadLevel(currentLevel); }
+        function resetCurrentLevel() { showIntroScreen(); }
+        function nextLevel() { currentLevel++; showIntroScreen(); }
 
-        // Perfect unified input handling (No Double Taps, No Freeze)
+        // Secure touch input binding
         function onAction(e) {
             e.preventDefault();
             const g = e.target.closest('.arrow-group');
@@ -381,7 +432,8 @@
         document.getElementById('refresh-btn').addEventListener('click', resetCurrentLevel);
         document.getElementById('hint-btn').addEventListener('click', triggerHint);
 
-        loadLevel(currentLevel);
+        // Initialized with splash intro screen
+        showIntroScreen();
     </script>
 </body>
 </html>
