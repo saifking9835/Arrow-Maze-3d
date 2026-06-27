@@ -2,13 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Arrows - Puzzle Escape</title>
     <style>
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
         }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -19,6 +21,7 @@
             justify-content: center;
             min-height: 100vh;
             color: #333;
+            overflow: hidden;
         }
         h1 {
             color: #2c3e50;
@@ -29,7 +32,6 @@
             margin-bottom: 20px;
             font-size: 14px;
         }
-        /* Game Board Container */
         #game-container {
             position: relative;
             width: 360px;
@@ -39,8 +41,8 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.08);
             overflow: hidden;
             border: 4px solid #34495e;
+            touch-action: none;
         }
-        /* Grid background dots mimicking your screenshot */
         .grid-bg {
             position: absolute;
             width: 100%;
@@ -49,21 +51,33 @@
             background-size: 20px 20px;
             pointer-events: none;
         }
-        /* Custom styled SVG Arrow paths */
-        .arrow-path {
-            position: absolute;
+        /* Touch area ko bada karne ke liye wrapper group */
+        .arrow-group {
+            cursor: pointer;
+            pointer-events: auto;
+            transition: transform 0.5s ease-in, opacity 0.5s;
+        }
+        /* Dikhne wali line */
+        .arrow-line {
             fill: none;
             stroke: #1e272e;
             stroke-width: 6;
             stroke-linecap: round;
             stroke-linejoin: round;
-            cursor: pointer;
-            transition: transform 0.5s ease-in, opacity 0.5s;
+            pointer-events: none; 
         }
-        .arrow-path:hover {
+        /* Mobile par touch pakadne ke liye invisible moti line */
+        .arrow-hitbox {
+            fill: none;
+            stroke: transparent;
+            stroke-width: 30; 
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            cursor: pointer;
+        }
+        .arrow-group:active .arrow-line {
             stroke: #3498db;
         }
-        /* Win Screen Overlay */
         #win-screen {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -85,10 +99,6 @@
             border-radius: 25px;
             cursor: pointer;
             box-shadow: 0 5px 15px rgba(92, 103, 242, 0.3);
-            transition: transform 0.2s;
-        }
-        button:hover {
-            transform: scale(1.05);
         }
     </style>
 </head>
@@ -105,18 +115,31 @@
                 <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="8" refY="3.5" orient="auto">
                     <polygon points="0 0, 10 3.5, 0 7" fill="#1e272e"/>
                 </marker>
-                <marker id="arrowhead-hover" markerWidth="10" markerHeight="7" refX="8" refY="3.5" orient="auto">
-                    <polygon points="0 0, 10 3.5, 0 7" fill="#3498db"/>
-                </marker>
             </defs>
 
-            <path id="arrow1" class="arrow-path" d="M 40 80 L 320 80" marker-end="url(#arrowhead)" data-dir="R" />
+            <!-- Arrow 1: Top Right -->
+            <g id="arrow1" class="arrow-group" data-dir="R">
+                <path class="arrow-hitbox" d="M 40 80 L 320 80" />
+                <path class="arrow-line" d="M 40 80 L 320 80" marker-end="url(#arrowhead)" />
+            </g>
             
-            <path id="arrow2" class="arrow-path" d="M 100 240 L 100 120" marker-end="url(#arrowhead)" data-dir="U" />
+            <!-- Arrow 2: Up -->
+            <g id="arrow2" class="arrow-group" data-dir="U">
+                <path class="arrow-hitbox" d="M 100 290 L 100 150" />
+                <path class="arrow-line" d="M 100 290 L 100 150" marker-end="url(#arrowhead)" />
+            </g>
             
-            <path id="arrow3" class="arrow-path" d="M 180 160 L 260 160 L 260 280" marker-end="url(#arrowhead)" data-dir="D" />
+            <!-- Arrow 3: Hooked Down -->
+            <g id="arrow3" class="arrow-group" data-dir="D">
+                <path class="arrow-hitbox" d="M 180 180 L 260 180 L 260 300" />
+                <path class="arrow-line" d="M 180 180 L 260 180 L 260 300" marker-end="url(#arrowhead)" />
+            </g>
             
-            <path id="arrow4" class="arrow-path" d="M 300 360 L 60 360" marker-end="url(#arrowhead)" data-dir="L" />
+            <!-- Arrow 4: Bottom Left -->
+            <g id="arrow4" class="arrow-group" data-dir="L">
+                <path class="arrow-hitbox" d="M 300 390 L 60 390" />
+                <path class="arrow-line" d="M 300 390 L 60 390" marker-end="url(#arrowhead)" />
+            </g>
         </svg>
 
         <div id="win-screen">
@@ -128,24 +151,17 @@
     <script>
         const svg = document.getElementById('game-svg');
         const winScreen = document.getElementById('win-screen');
-        
-        // Bounding box dimensions for the board
         const BOARD_WIDTH = 360;
         const BOARD_HEIGHT = 480;
 
-        // Custom function to check if two SVG paths intersect
         function isColliding(path1, path2) {
-            // Get accurate coordinates along the paths to check for blockages
             const len1 = path1.getTotalLength();
             const len2 = path2.getTotalLength();
-            
-            // Sample points along both lines
             for (let i = 0; i <= len1; i += 8) {
                 const pt1 = path1.getPointAtLength(i);
                 for (let j = 0; j <= len2; j += 8) {
                     const pt2 = path2.getPointAtLength(j);
-                    // If points are extremely close, they are overlapping/blocking
-                    if (Math.abs(pt1.x - pt2.x) < 6 && Math.abs(pt1.y - pt2.y) < 6) {
+                    if (Math.abs(pt1.x - pt2.x) < 12 && Math.abs(pt1.y - pt2.y) < 12) {
                         return true;
                     }
                 }
@@ -153,18 +169,15 @@
             return false;
         }
 
-        // Handles the click on any arrow
-        svg.addEventListener('click', (e) => {
-            const clickedPath = e.target.closest('.arrow-path');
-            if (!clickedPath) return;
+        function handleArrowClick(clickedGroup) {
+            if (!clickedGroup || !clickedGroup.classList.contains('arrow-group')) return;
 
-            const direction = clickedPath.getAttribute('data-dir');
+            const direction = clickedGroup.getAttribute('data-dir');
+            const mainLine = clickedGroup.querySelector('.arrow-line');
             
-            // Create a "ghost/virtual" prediction line to see if it can exit safely
-            const ghostPath = clickedPath.cloneNode(true);
+            const ghostPath = mainLine.cloneNode(true);
             svg.appendChild(ghostPath);
 
-            // Extend the ghost path all the way out of the screen based on its direction
             let translationX = 0;
             let translationY = 0;
             if (direction === 'R') translationX = BOARD_WIDTH;
@@ -174,47 +187,53 @@
 
             ghostPath.setAttribute('transform', `translate(${translationX}, ${translationY})`);
 
-            // Check if this exit path collides with any REMAINING active arrows
-            const otherArrows = Array.from(document.querySelectorAll('.arrow-path')).filter(p => p !== clickedPath);
+            const otherGroups = Array.from(document.querySelectorAll('.arrow-group')).filter(g => g !== clickedGroup);
             let isBlocked = false;
 
-            for (let other of otherArrows) {
-                if (isColliding(ghostPath, other)) {
+            for (let other of otherGroups) {
+                const otherLine = other.querySelector('.arrow-line');
+                if (isColliding(ghostPath, otherLine)) {
                     isBlocked = true;
                     break;
                 }
             }
 
-            // Remove the temporary check line
             ghostPath.remove();
 
             if (!isBlocked) {
-                // SUCCESS: Fly out of the screen!
-                clickedPath.style.transform = `translate(${translationX}px, ${translationY}px)`;
-                clickedPath.style.opacity = '0';
-                
-                // Remove from DOM after animation completes
+                clickedGroup.style.transform = `translate(${translationX}px, ${translationY}px)`;
+                clickedGroup.style.opacity = '0';
                 setTimeout(() => {
-                    clickedPath.remove();
+                    clickedGroup.remove();
                     checkWin();
                 }, 500);
             } else {
-                // BLOCKED: Small shake effect to show it's stuck
-                clickedPath.style.transform = 'translate(5px, 0px)';
-                setTimeout(() => clickedPath.style.transform = 'translate(-5px, 0px)', 100);
-                setTimeout(() => clickedPath.style.transform = 'translate(0px, 0px)', 200);
+                clickedGroup.style.transform = 'translate(8px, 0px)';
+                setTimeout(() => clickedGroup.style.transform = 'translate(-8px, 0px)', 80);
+                setTimeout(() => clickedGroup.style.transform = 'translate(0px, 0px)', 160);
             }
+        }
+
+        // Mobile touch aur desktop click dono ko support karne ke liye listener
+        svg.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            const group = e.target.closest('.arrow-group');
+            if (group) handleArrowClick(group);
+        }, { passive: false });
+
+        svg.addEventListener('click', (e) => {
+            const group = e.target.closest('.arrow-group');
+            if (group) handleArrowClick(group);
         });
 
         function checkWin() {
-            const remaining = document.querySelectorAll('.arrow-path');
-            if (remaining.length === 0) {
+            if (document.querySelectorAll('.arrow-group').length === 0) {
                 winScreen.style.display = 'flex';
             }
         }
 
         function resetGame() {
-            location.reload(); // Quick reset by reloading the single page
+            location.reload();
         }
     </script>
 </body>
