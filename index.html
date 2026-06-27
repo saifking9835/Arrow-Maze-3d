@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Arrows - Logic Puzzle Escape</title>
+    <title>Arrows - Premium Puzzle Escape</title>
     <style>
         * {
             box-sizing: border-box;
@@ -13,23 +13,23 @@
             -webkit-user-select: none;
         }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #f7f9fc;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #f3f4f6;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             min-height: 100vh;
-            color: #1e272e;
+            color: #1f2937;
             overflow: hidden;
         }
         
         #lives-container {
             display: flex;
             gap: 6px;
-            font-size: 22px;
-            margin-bottom: 10px;
-            height: 30px;
+            font-size: 24px;
+            margin-bottom: 12px;
+            height: 32px;
         }
 
         /* Premium Controls Row */
@@ -37,72 +37,78 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            width: 400px;
-            padding: 0 15px;
+            width: 420px;
+            padding: 0 10px;
             margin-bottom: 15px;
         }
         #level-indicator {
-            color: #2c3e50;
+            color: #1f2937;
             font-size: 18px;
             font-weight: 700;
             background: #ffffff;
-            padding: 6px 20px;
-            border-radius: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            padding: 8px 24px;
+            border-radius: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border: 1px solid #e5e7eb;
         }
         .icon-btn {
             background: #ffffff;
-            border: none;
+            border: 1px solid #e5e7eb;
             border-radius: 50%;
-            width: 46px;
-            height: 46px;
+            width: 50px;
+            height: 50px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .icon-btn:active {
-            transform: scale(0.9);
-            background-color: #f1f2f6;
+            transform: scale(0.92);
+            background-color: #f9fafb;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
         }
         .icon-btn svg {
             width: 24px;
             height: 24px;
-            fill: #2c3e50;
+            fill: #4b5563;
+            transition: fill 0.2s;
+        }
+        #hint-btn:hover svg {
+            fill: #f59e0b; /* Golden Glow on Premium Idea Button */
         }
 
-        /* Bigger Board & Smaller Elements */
+        /* Larger Background Container */
         #game-container {
             position: relative;
-            width: 400px;
-            height: 580px;
+            width: 420px;
+            height: 600px;
             background: #ffffff;
-            border-radius: 28px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+            border-radius: 32px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.06);
             overflow: hidden;
-            border: 4px solid #2c3e50;
+            border: 5px solid #1f2937;
             touch-action: none;
         }
         .grid-bg {
             position: absolute;
             width: 100%;
             height: 100%;
-            background-image: radial-gradient(#dfe6e9 2.5px, transparent 2.5px);
-            background-size: 25px 25px;
+            background-image: radial-gradient(#d1d5db 2.5px, transparent 2.5px);
+            background-size: 28px 28px;
             pointer-events: none;
         }
         
-        /* Sleeker, Thinner Complex Arrows */
+        /* Smaller, Sleeker Arrows */
         .arrow-group {
             cursor: pointer;
-            transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.3s;
+            transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s;
         }
         .arrow-line {
             fill: none;
-            stroke: #1e272e;
-            stroke-width: 5.5; /* Sleek & Smaller arrow thickness */
+            stroke: #1f2937;
+            stroke-width: 5.5; /* Slender, small stroke */
             stroke-linecap: round;
             stroke-linejoin: round;
             pointer-events: none; 
@@ -110,21 +116,21 @@
         .arrow-hitbox {
             fill: none;
             stroke: transparent;
-            stroke-width: 35; 
+            stroke-width: 38; 
             stroke-linecap: round;
             stroke-linejoin: round;
             cursor: pointer;
         }
 
-        /* Error state when arrows collide */
+        /* Error Flash style */
         .arrow-error .arrow-line {
-            stroke: #ff4757 !important;
+            stroke: #ef4444 !important;
         }
 
         .overlay-screen {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255, 255, 255, 0.96);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -133,15 +139,15 @@
             z-index: 10;
         }
         .action-btn {
-            background: #4a69bd;
+            background: #3b82f6;
             color: white;
             border: none;
-            padding: 12px 40px;
+            padding: 14px 45px;
             font-size: 16px;
             font-weight: 600;
-            border-radius: 25px;
+            border-radius: 30px;
             cursor: pointer;
-            box-shadow: 0 6px 15px rgba(74, 105, 189, 0.3);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
         }
     </style>
 </head>
@@ -150,12 +156,14 @@
     <div id="lives-container">❤️❤️❤️</div>
     
     <div class="controls-row">
-        <div class="icon-btn" id="hint-btn">
-            <svg viewBox="0 0 24 24"><path d="M12 2C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7zm2.5 14h-5v-1h5v1zm0-2h-5v-1h5v1z"/></svg>
+        <div class="icon-btn" id="hint-btn" title="Idea">
+            <svg viewBox="0 0 24 24">
+                <path d="M12 2C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7zm2.5 14h-5v-1h5v1zm0-2h-5v-1h5v1z M9 20h6v1H9z"/>
+            </svg>
         </div>
         <div id="level-indicator">Level 1</div>
-        <div class="icon-btn" id="refresh-btn">
-            <svg viewBox="0 0 1000 1000" style="width:26px; height:26px;">
+        <div class="icon-btn" id="refresh-btn" title="Reset">
+            <svg viewBox="0 0 1000 1000">
                 <path d="M500,85c102.5,0,199.3,36.9,275.1,102.6L873.9,89c19.1-19.1,50.1-5.6,50.1,21.5v284.2c0,16.6-13.4,30-30,30H609.8c-27.1,0-40.6-31-21.5-50.1l90.9-90.9C623.5,233,564.1,205,500,205c-162.9,0-295,132.1-295,295c0,42.8,9.2,83.4,25.6,120.3c10,22.6,0.3,49.2-21.7,59.8l-18.7,9c-23,11.1-50.5,1-61-22.1C102.2,615,85,559.5,85,500C85,270.8,270.8,85,500,85z M889.3,316.3c15.1,53,25.7,108.5,25.7,166.4c0,229.2-185.8,415-415,415c-100.8,0-196.1-36-271-99.7l-91.8,91.8c-19.1,19.1-50.1,5.6-50.1-21.5V604.2c0-16.6,13.4-30,30-30h284.2c27.1,0,40.6,31,21.5,50.1l-94,94C401.4,781.4,448.9,795,500,795c162.9,0,295-132.1,295-295c0-45.7-10.5-88.9-29-127.6c-10.2-21.4-1.2-47.4,20-58.4l20.4-10.6C829.3,281.3,858,291,889.3,316.3z"/>
             </svg>
         </div>
@@ -164,27 +172,91 @@
     <div id="game-container">
         <div class="grid-bg"></div>
         
-        <svg id="game-svg" width="400" height="580" style="position: absolute; top:0; left:0;">
+        <svg id="game-svg" width="420" height="600" style="position: absolute; top:0; left:0;">
             <defs>
-                <marker id="arrowhead" markerWidth="9" markerHeight="7" refX="5" refY="3.5" orient="auto">
-                    <polygon points="0 0, 9 3.5, 0 7" fill="#1e272e"/>
+                <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="4" refY="3" orient="auto">
+                    <polygon points="0 0, 8 3, 0 6" fill="#1f2937"/>
                 </marker>
             </defs>
             <g id="arrows-container"></g>
         </svg>
 
         <div id="win-screen" class="overlay-screen">
-            <h2 style="margin-bottom: 20px; color: #2ecc71; font-size: 24px;">Level Cleared! 🎉</h2>
+            <h2 style="margin-bottom: 20px; color: #10b981; font-size: 26px;">Level Cleared! 🎉</h2>
             <button class="action-btn" onclick="nextLevel()">Next Level</button>
         </div>
 
         <div id="gameover-screen" class="overlay-screen">
-            <h2 style="margin-bottom: 20px; color: #e74c3c; font-size: 24px;">Game Over! 😢</h2>
+            <h2 style="margin-bottom: 20px; color: #ef4444; font-size: 26px;">Game Over! 😢</h2>
             <button class="action-btn" onclick="resetCurrentLevel()">Try Again</button>
         </div>
     </div>
 
     <script>
+        // Web Audio API Context for dynamic glitch-free procedural music & sounds
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+        let bgmNode = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new AudioCtx();
+                playBackgroundMusic();
+            }
+        }
+
+        function playBackgroundMusic() {
+            // Procedural ambient game melody music
+            let notes = [261.63, 293.66, 329.63, 392.00, 440.00];
+            let idx = 0;
+            
+            setInterval(() => {
+                if (!audioCtx || audioCtx.state === 'suspended') return;
+                let osc = audioCtx.createOscillator();
+                let gain = audioCtx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(notes[idx % notes.length], audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.8);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 1.9);
+                idx++;
+            }, 1000);
+        }
+
+        function playSound(type) {
+            if (!audioCtx) return;
+            let osc = audioCtx.createOscillator();
+            let gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            if (type === 'tap') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(587.33, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.12);
+            } else if (type === 'crash') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(120, audioCtx.currentTime);
+                osc.frequency.linearRampToValueAtTime(40, audioCtx.currentTime + 0.3);
+                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.35);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.4);
+            } else if (type === 'win') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
+                osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1);
+                osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.2);
+                gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.45);
+            }
+        }
+
         const svg = document.getElementById('game-svg');
         const container = document.getElementById('arrows-container');
         const winScreen = document.getElementById('win-screen');
@@ -195,36 +267,42 @@
         let currentLevel = 0;
         let remainingLives = 3;
 
-        // True Maze-Style Bent Puzzle Levels (As seen in your screenshots)
+        // Harder Handcrafted Maze Levels inspired by your actual gameplay screenshots
         const HANDCRAFTED_LEVELS = [
-            // Level 1: Winding logic intro
+            // Level 1: Complex introductory intersections
             [
-                { id: 1, dir: "R", path: "M 50 150 L 250 150 L 250 250 L 350 250" },
-                { id: 2, dir: "U", path: "M 150 450 L 150 200 L 70 200" },
-                { id: 3, dir: "D", path: "M 300 100 L 300 400 L 200 400" }
+                { id: 1, dir: "R", path: "M 40 160 L 260 160 L 260 280 L 380 280" },
+                { id: 2, dir: "U", path: "M 160 480 L 160 220 L 60 220" },
+                { id: 3, dir: "D", path: "M 320 100 L 320 420 L 200 420" }
             ],
-            // Level 2: Intersecting Loops
+            // Level 2: Real interlocking puzzle matrix (Hard)
             [
-                { id: 1, dir: "L", path: "M 350 120 L 100 120 L 100 300 L 50 300" },
-                { id: 2, dir: "D", path: "M 180 80 L 180 250 L 320 250 L 320 450" },
-                { id: 3, dir: "U", path: "M 250 500 L 250 350 L 120 350" },
-                { id: 4, dir: "R", path: "M 70 420 L 350 420" }
+                { id: 1, dir: "L", path: "M 380 140 L 120 140 L 120 320 L 40 320" },
+                { id: 2, dir: "D", path: "M 200 80 L 200 260 L 340 260 L 340 480" },
+                { id: 3, dir: "U", path: "M 280 520 L 280 360 L 140 360" },
+                { id: 4, dir: "R", path: "M 60 440 L 380 440" }
+            ],
+            // Level 3: Extreme Maze Structure
+            [
+                { id: 1, dir: "D", path: "M 80 100 L 80 500 L 220 500" },
+                { id: 2, dir: "R", path: "M 40 220 L 320 220 L 320 340 L 380 340" },
+                { id: 3, dir: "U", path: "M 180 420 L 180 160 L 360 160" },
+                { id: 4, dir: "L", path: "M 360 280 L 140 280 L 140 400 L 40 400" }
             ]
         ];
 
-        // AI Procedural Loop Generator to seamlessly create 100,000+ authentic multi-bend maze puzzles
-        function generateComplexPuzzleLevel(levelNum) {
+        function generateUltraHardPuzzleLevel(levelNum) {
             const levelArrows = [];
-            const count = Math.min(4 + Math.floor(levelNum / 5), 10);
+            const count = Math.min(5 + Math.floor(levelNum / 3), 12);
             const directions = ["R", "L", "U", "D"];
             
             for(let i=0; i<count; i++) {
-                let x1 = 50 + Math.floor(Math.random()*6)*50;
-                let y1 = 100 + Math.floor(Math.random()*8)*50;
-                let x2 = 50 + Math.floor(Math.random()*6)*50;
-                let y2 = 100 + Math.floor(Math.random()*8)*50;
-                let x3 = 50 + Math.floor(Math.random()*6)*50;
-                let y3 = 100 + Math.floor(Math.random()*8)*50;
+                let x1 = 40 + Math.floor(Math.random()*6)*60;
+                let y1 = 120 + Math.floor(Math.random()*7)*60;
+                let x2 = 40 + Math.floor(Math.random()*6)*60;
+                let y2 = 120 + Math.floor(Math.random()*7)*60;
+                let x3 = 40 + Math.floor(Math.random()*6)*60;
+                let y3 = 120 + Math.floor(Math.random()*7)*60;
                 
                 const dir = directions[Math.floor(Math.random()*directions.length)];
                 levelArrows.push({
@@ -234,10 +312,6 @@
                 });
             }
             return levelArrows;
-        }
-
-        function triggerVibration() {
-            if (navigator.vibrate) navigator.vibrate(80);
         }
 
         function updateLivesDisplay() {
@@ -254,7 +328,7 @@
             remainingLives = 3;
             updateLivesDisplay();
 
-            const data = index < HANDCRAFTED_LEVELS.length ? HANDCRAFTED_LEVELS[index] : generateComplexPuzzleLevel(index);
+            const data = index < HANDCRAFTED_LEVELS.length ? HANDCRAFTED_LEVELS[index] : generateUltraHardPuzzleLevel(index);
 
             data.forEach(arrow => {
                 const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
@@ -277,17 +351,16 @@
             });
         }
 
-        // Precision collision checker to ensure it functions perfectly like a puzzle grid
         function checkPathIntersection(movingPath, stablePath) {
             const len1 = movingPath.getTotalLength();
             const len2 = stablePath.getTotalLength();
             
-            // Sample points along paths to detect intersections
-            for(let i=0; i<=len1; i+=6) {
+            // Fixed accuracy coordinates resolution step
+            for(let i=0; i<=len1; i+=5) {
                 let p1 = movingPath.getPointAtLength(i);
-                for(let j=0; j<=len2; j+=6) {
+                for(let j=0; j<=len2; j+=5) {
                     let p2 = stablePath.getPointAtLength(j);
-                    if(Math.abs(p1.x - p2.x) < 14 && Math.abs(p1.y - p2.y) < 14) {
+                    if(Math.abs(p1.x - p2.x) < 12 && Math.abs(p1.y - p2.y) < 12) {
                         return true;
                     }
                 }
@@ -296,6 +369,7 @@
         }
 
         function handleArrowTap(group) {
+            initAudio();
             if (remainingLives <= 0) return;
 
             const targetLine = group.querySelector('.arrow-line');
@@ -310,30 +384,35 @@
             }
 
             if (!isBlocked) {
-                // Successful flyout animation according to facing direction
+                playSound('tap');
+                // GLITCH FIX: Clear pointer events instantly so it can't double trigger or get stuck
+                group.style.pointerEvents = 'none';
+                
                 const dir = group.getAttribute('data-dir');
                 let tx = 0, ty = 0;
-                if(dir === "R") tx = 600;
-                if(dir === "L") tx = -600;
-                if(dir === "U") ty = -700;
-                if(dir === "D") ty = 700;
+                if(dir === "R") tx = 650;
+                if(dir === "L") tx = -650;
+                if(dir === "U") ty = -750;
+                if(dir === "D") ty = 750;
 
                 group.style.transform = `translate(${tx}px, ${ty}px)`;
                 group.style.opacity = '0';
-                group.style.pointerEvents = 'none';
+                
                 setTimeout(() => {
                     group.remove();
                     if (document.querySelectorAll('.arrow-group').length === 0) {
+                        playSound('win');
                         winScreen.style.display = 'flex';
                     }
                 }, 400);
             } else {
-                // Trigger Hardware Haptic/Vibration & Show red warning error
-                triggerVibration();
+                playSound('crash');
+                if (navigator.vibrate) navigator.vibrate(100);
+
                 group.classList.add('arrow-error');
-                group.style.transform = 'translate(6px, 0px)';
+                group.style.transform = 'translate(8px, 0px)';
                 
-                setTimeout(() => group.style.transform = 'translate(-6px, 0px)', 50);
+                setTimeout(() => group.style.transform = 'translate(-8px, 0px)', 50);
                 setTimeout(() => group.style.transform = 'translate(0px, 0px)', 100);
                 setTimeout(() => group.classList.remove('arrow-error'), 400);
 
@@ -346,6 +425,7 @@
         }
 
         function triggerHint() {
+            initAudio();
             const groups = Array.from(document.querySelectorAll('.arrow-group'));
             for (let g of groups) {
                 let line = g.querySelector('.arrow-line');
@@ -355,8 +435,8 @@
                     if(checkPathIntersection(line, o.querySelector('.arrow-line'))) { blocked = true; break; }
                 }
                 if(!blocked) {
-                    g.style.opacity = '0.4';
-                    setTimeout(() => g.style.opacity = '1', 800);
+                    g.style.opacity = '0.3';
+                    setTimeout(() => g.style.opacity = '1', 700);
                     break;
                 }
             }
@@ -365,7 +445,6 @@
         function resetCurrentLevel() { loadLevel(currentLevel); }
         function nextLevel() { currentLevel++; loadLevel(currentLevel); }
 
-        // Core Event Bindings
         svg.addEventListener('click', (e) => {
             const g = e.target.closest('.arrow-group');
             if(g) handleArrowTap(g);
