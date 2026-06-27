@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Arrows - Puzzle Escape</title>
+    <title>Arrows - Premium Puzzle Escape</title>
     <style>
         * {
             box-sizing: border-box;
@@ -13,155 +13,163 @@
             -webkit-user-select: none;
         }
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: radial-gradient(circle at top, #1e272e 0%, #0f1418 100%);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             min-height: 100vh;
-            color: #333;
+            color: #f5f6fa;
             overflow: hidden;
         }
         h1 {
-            color: #2c3e50;
+            color: #ffffff;
             margin-bottom: 5px;
-            font-size: 28px;
+            font-size: 26px;
+            font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 3px;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
         
         #lives-container {
             display: flex;
-            gap: 5px;
-            font-size: 24px;
-            margin-bottom: 10px;
-            height: 32px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            gap: 6px;
+            font-size: 20px;
+            margin-bottom: 15px;
+            height: 28px;
+            letter-spacing: 2px;
         }
 
-        /* Standard Premium Controls Row */
+        /* Premium Sleek Controls Row */
         .controls-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            width: 360px;
-            padding: 0 10px;
+            width: 380px;
+            padding: 0 5px;
             margin-bottom: 15px;
         }
         #level-indicator {
-            color: #2c3e50;
-            font-size: 20px;
-            font-weight: 800;
-            background: white;
-            padding: 6px 16px;
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.08);
+            padding: 6px 18px;
             border-radius: 20px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
         }
         .icon-btn {
-            background: white;
-            border: none;
-            border-radius: 12px;
-            width: 46px;
-            height: 46px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
+            width: 44px;
+            height: 44px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 22px;
+            font-size: 18px;
             cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             transition: all 0.2s ease;
-            border-bottom: 3px solid #cbd5e1;
+            color: white;
+            backdrop-filter: blur(10px);
         }
         .icon-btn:active {
-            transform: translateY(2px);
-            border-bottom-width: 1px;
-            background-color: #f8fafc;
+            transform: scale(0.92);
+            background: rgba(255, 255, 255, 0.15);
         }
 
-        /* Premium Game Container */
+        /* Bigger & Premium Game Board */
         #game-container {
             position: relative;
-            width: 360px;
-            height: 480px;
-            background: white;
-            border-radius: 24px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+            width: 380px;
+            height: 540px;
+            background: #151a1e;
+            border-radius: 32px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1);
             overflow: hidden;
-            border: 4px solid #2c3e50;
+            border: 1px solid rgba(255, 255, 255, 0.1);
             touch-action: none;
         }
         .grid-bg {
             position: absolute;
             width: 100%;
             height: 100%;
-            background-image: radial-gradient(#cbd5e1 2px, transparent 2px);
-            background-size: 24px 24px;
+            background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1.5px, transparent 1.5px);
+            background-size: 30px 30px;
             pointer-events: none;
         }
+        
+        /* Sleeker, Thinner Neon Arrows */
         .arrow-group {
             cursor: pointer;
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s;
+            transition: transform 0.35s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.3s;
         }
         .arrow-line {
             fill: none;
-            stroke: #2c3e50;
-            stroke-width: 7;
+            stroke: #00d2d3;
+            stroke-width: 4.5;
             stroke-linecap: round;
             stroke-linejoin: round;
             pointer-events: none; 
+            filter: drop-shadow(0 0 4px rgba(0, 210, 211, 0.4));
         }
         .arrow-hitbox {
             fill: none;
             stroke: transparent;
-            stroke-width: 45; 
+            stroke-width: 40; 
             stroke-linecap: round;
             stroke-linejoin: round;
             cursor: pointer;
         }
         
         @keyframes hint-glow {
-            0% { stroke: #2c3e50; stroke-width: 7; }
-            50% { stroke: #2ecc71; stroke-width: 14; }
-            100% { stroke: #2c3e50; stroke-width: 7; }
+            0% { stroke: #00d2d3; filter: drop-shadow(0 0 4px rgba(0, 210, 211, 0.4)); }
+            50% { stroke: #10ac84; filter: drop-shadow(0 0 12px #10ac84); stroke-width: 6; }
+            100% { stroke: #00d2d3; filter: drop-shadow(0 0 4px rgba(0, 210, 211, 0.4)); }
         }
         .hint-active .arrow-line {
             animation: hint-glow 0.5s ease-in-out 3;
         }
 
+        /* Premium Minimalist Overlays */
         .overlay-screen {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255, 255, 255, 0.96);
+            background: rgba(15, 20, 24, 0.95);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             display: none;
             z-index: 10;
-            backdrop-filter: blur(4px);
+            backdrop-filter: blur(8px);
         }
         .action-btn {
-            background: linear-gradient(135deg, #6c5ce7, #a8a5ff);
+            background: linear-gradient(135deg, #ff9f43, #ff6b6b);
             color: white;
             border: none;
-            padding: 15px 45px;
-            font-size: 18px;
-            font-weight: bold;
-            border-radius: 30px;
+            padding: 14px 45px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 25px;
             cursor: pointer;
-            box-shadow: 0 6px 20px rgba(108, 92, 231, 0.4);
-            border-bottom: 4px solid #4834d4;
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+            letter-spacing: 1px;
+            transition: all 0.2s;
         }
         .action-btn:active {
-            transform: translateY(2px);
-            border-bottom-width: 1px;
+            transform: scale(0.95);
+            box-shadow: 0 4px 10px rgba(255, 107, 107, 0.2);
         }
     </style>
 </head>
 <body>
 
-    <h1>Arrows</h1>
+    <h1>Arrow Puzzle</h1>
     
     <div id="lives-container">❤️❤️❤️</div>
     
@@ -174,23 +182,23 @@
     <div id="game-container">
         <div class="grid-bg"></div>
         
-        <svg id="game-svg" width="360" height="480" style="position: absolute; top:0; left:0;">
+        <svg id="game-svg" width="380" height="540" style="position: absolute; top:0; left:0;">
             <defs>
-                <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="8" refY="3.5" orient="auto">
-                    <polygon points="0 0, 10 3.5, 0 7" fill="#2c3e50"/>
+                <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="6" refY="3" orient="auto">
+                    <polygon points="0 0, 8 3, 0 6" fill="#00d2d3"/>
                 </marker>
             </defs>
             <g id="arrows-container"></g>
         </svg>
 
         <div id="win-screen" class="overlay-screen">
-            <h2 id="win-title" style="margin-bottom: 20px; color: #2ecc71; font-size: 24px;">Level Cleared! 🎉</h2>
-            <button class="action-btn" id="action-btn" onclick="nextLevel()">Next Level</button>
+            <h2 id="win-title" style="margin-bottom: 25px; color: #10ac84; font-size: 26px; font-weight: 700;">Level Cleared! 🎉</h2>
+            <button class="action-btn" id="action-btn" onclick="nextLevel()">NEXT LEVEL</button>
         </div>
 
         <div id="gameover-screen" class="overlay-screen">
-            <h2 style="margin-bottom: 20px; color: #e74c3c; font-size: 24px;">Game Over! 😢</h2>
-            <button class="action-btn" onclick="resetCurrentLevel()">Try Again</button>
+            <h2 style="margin-bottom: 25px; color: #ff6b6b; font-size: 26px; font-weight: 700;">Game Over! 😢</h2>
+            <button class="action-btn" onclick="resetCurrentLevel()">TRY AGAIN</button>
         </div>
     </div>
 
@@ -204,55 +212,63 @@
         const actionBtn = document.getElementById('action-btn');
         const winTitle = document.getElementById('win-title');
 
-        const BOARD_WIDTH = 360;
-        const BOARD_HEIGHT = 480;
+        const BOARD_WIDTH = 380;
+        const BOARD_HEIGHT = 540;
         
         let currentLevel = 0;
         let maxLives = 3;
         let remainingLives = maxLives;
 
-        // Base handcrafted levels
+        // True Complex Puzzle Geometry Layouts (Handcrafted for pure puzzle logic)
         const PREBUILT_LEVELS = [
+            // Level 1: Sleek introduction
             [
-                { dir: "R", path: "M 40 80 L 320 80" },
-                { dir: "U", path: "M 100 290 L 100 150" },
-                { dir: "D", path: "M 180 180 L 260 180 L 260 300" },
-                { dir: "L", path: "M 300 390 L 60 390" }
+                { dir: "R", path: "M 40 100 L 340 100" },
+                { dir: "U", path: "M 110 340 L 110 180" },
+                { dir: "D", path: "M 190 220 L 280 220 L 280 360" },
+                { dir: "L", path: "M 340 440 L 60 440" }
             ],
+            // Level 2: Flipped intersections (Needs planning)
             [
-                { dir: "U", path: "M 75 410 L 75 145" },
-                { dir: "R", path: "M 55 265 L 315 265" },
-                { dir: "L", path: "M 315 175 L 125 175" },
-                { dir: "D", path: "M 225 75 L 225 355" },
-                { dir: "R", path: "M 105 345 L 295 345" }
+                { dir: "U", path: "M 80 460 L 80 160" },
+                { dir: "R", path: "M 50 300 L 330 300" },
+                { dir: "L", path: "M 330 200 L 140 200" },
+                { dir: "D", path: "M 250 90 L 250 400" },
+                { dir: "R", path: "M 110 390 L 310 390" }
+            ],
+            // Level 3: Hard Block Puzzle
+            [
+                { dir: "R", path: "M 50 120 L 330 120" },
+                { dir: "D", path: "M 90 80 L 90 260 L 220 260" },
+                { dir: "L", path: "M 310 180 L 150 180" },
+                { dir: "U", path: "M 170 480 L 170 320" },
+                { dir: "D", path: "M 290 150 L 290 450" },
+                { dir: "L", path: "M 340 400 L 60 400" }
             ]
         ];
 
-        // AI Procedural Level Generator for generating up to 100,000+ levels automatically!
+        // AI Level Creator for generating 100,000+ infinite puzzle combinations
         function generateProceduralLevel(seedLevel) {
             const directions = ['R', 'L', 'U', 'D'];
-            const arrowCount = Math.min(4 + Math.floor(seedLevel / 5), 8); // Levels get harder gradually
+            const arrowCount = Math.min(4 + Math.floor(seedLevel / 4), 9); 
             const levelArrows = [];
             
-            const standardGridsX = [60, 110, 160, 210, 260, 310];
-            const standardGridsY = [80, 140, 200, 260, 320, 380];
+            const gridX = [60, 115, 170, 225, 280, 335];
+            const gridY = [90, 160, 230, 300, 370, 440, 490];
 
             for (let i = 0; i < arrowCount; i++) {
                 const dir = directions[Math.floor(Math.random() * directions.length)];
                 let x1, y1, x2, y2;
 
                 if (dir === 'R' || dir === 'L') {
-                    y1 = y2 = standardGridsY[Math.floor(Math.random() * standardGridsY.length)];
-                    x1 = standardGridsX[0];
-                    x2 = standardGridsX[standardGridsX.length - 1];
+                    y1 = y2 = gridY[Math.floor(Math.random() * gridY.length)];
+                    x1 = gridX[0]; x2 = gridX[gridX.length - 1];
                     if (dir === 'L') [x1, x2] = [x2, x1];
                 } else {
-                    x1 = x2 = standardGridsX[Math.floor(Math.random() * standardGridsX.length)];
-                    y1 = standardGridsY[0];
-                    y2 = standardGridsY[standardGridsY.length - 1];
+                    x1 = x2 = gridX[Math.floor(Math.random() * gridX.length)];
+                    y1 = gridY[0]; y2 = gridY[gridY.length - 1];
                     if (dir === 'U') [y1, y2] = [y2, y1];
                 }
-
                 levelArrows.push({ dir: dir, path: `M ${x1} ${y1} L ${x2} ${y2}` });
             }
             return levelArrows;
@@ -260,7 +276,7 @@
 
         function triggerVibration() {
             if (navigator.vibrate) {
-                navigator.vibrate(80); // Native mobile hardware vibration trigger
+                navigator.vibrate(70); 
             }
         }
 
@@ -279,7 +295,6 @@
             remainingLives = maxLives;
             updateLivesDisplay();
 
-            // Load from prebuilt or use the AI generator
             const levelData = levelIndex < PREBUILT_LEVELS.length ? 
                                PREBUILT_LEVELS[levelIndex] : 
                                generateProceduralLevel(levelIndex);
@@ -368,18 +383,17 @@
                 setTimeout(() => {
                     clickedGroup.remove();
                     checkWin();
-                }, 400);
+                }, 350);
             } else {
-                // Shake and trigger hardware vibration
                 triggerVibration();
-                clickedGroup.style.transform = 'translate(10px, 0px)';
-                setTimeout(() => clickedGroup.style.transform = 'translate(-10px, 0px)', 60);
-                setTimeout(() => clickedGroup.style.transform = 'translate(0px, 0px)', 120);
+                clickedGroup.style.transform = 'translate(8px, 0px)';
+                setTimeout(() => clickedGroup.style.transform = 'translate(-8px, 0px)', 50);
+                setTimeout(() => clickedGroup.style.transform = 'translate(0px, 0px)', 100);
 
                 remainingLives--;
                 updateLivesDisplay();
                 if (remainingLives <= 0) {
-                    setTimeout(() => { gameoverScreen.style.display = 'flex'; }, 300);
+                    setTimeout(() => { gameoverScreen.style.display = 'flex'; }, 250);
                 }
             }
         }
@@ -400,7 +414,7 @@
             loadLevel(currentLevel);
         }
 
-        // Highly responsive listeners
+        // Highly Optimized Precision listeners
         svg.addEventListener('touchstart', (e) => {
             e.preventDefault();
             const group = e.target.closest('.arrow-group');
@@ -421,7 +435,6 @@
         function checkWin() {
             if (document.querySelectorAll('.arrow-group').length === 0) {
                 winTitle.innerText = `Level ${currentLevel + 1} Cleared! 🎉`;
-                actionBtn.innerText = "Next Level";
                 winScreen.style.display = 'flex';
             }
         }
