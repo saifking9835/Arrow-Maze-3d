@@ -27,12 +27,41 @@
             color: #2c3e50;
             margin-bottom: 5px;
         }
+        
+        /* Top Navigation/Controls Row */
+        .controls-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 360px;
+            padding: 0 10px;
+            margin-bottom: 15px;
+        }
         #level-indicator {
-            color: #7f8c8d;
-            margin-bottom: 20px;
-            font-size: 16px;
+            color: #2c3e50;
+            font-size: 18px;
             font-weight: bold;
         }
+        .icon-btn {
+            background: white;
+            border: 2px solid #dfe6e9;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: transform 0.1s, background-color 0.2s;
+        }
+        .icon-btn:active {
+            transform: scale(0.9);
+            background-color: #f1f2f6;
+        }
+
+        /* Game Board */
         #game-container {
             position: relative;
             width: 360px;
@@ -73,6 +102,17 @@
             stroke-linejoin: round;
             cursor: pointer;
         }
+        
+        /* Highlight hint animation */
+        @keyframes hint-glow {
+            0% { stroke: #5c67f2; stroke-width: 10; }
+            50% { stroke: #e74c3c; stroke-width: 14; }
+            100% { stroke: #5c67f2; stroke-width: 10; }
+        }
+        .hint-active .arrow-line {
+            animation: hint-glow 0.8s ease-in-out 2;
+        }
+
         .arrow-group:active .arrow-line {
             stroke: #5c67f2;
         }
@@ -87,7 +127,7 @@
             display: none;
             z-index: 10;
         }
-        button {
+        .action-btn {
             background-color: #5c67f2;
             color: white;
             border: none;
@@ -97,17 +137,18 @@
             border-radius: 25px;
             cursor: pointer;
             box-shadow: 0 5px 15px rgba(92, 103, 242, 0.4);
-            transition: transform 0.1s;
-        }
-        button:active {
-            transform: scale(0.95);
         }
     </style>
 </head>
 <body>
 
     <h1>Arrows</h1>
-    <div id="level-indicator">Level 1</div>
+    
+    <div class="controls-row">
+        <button class="icon-btn" onclick="showHint()" title="Hint/Idea">💡</button>
+        <div id="level-indicator">Level 1</div>
+        <button class="icon-btn" onclick="resetCurrentLevel()" title="Refresh Level">🔄</button>
+    </div>
 
     <div id="game-container">
         <div class="grid-bg"></div>
@@ -123,7 +164,7 @@
 
         <div id="win-screen">
             <h2 id="win-title" style="margin-bottom: 20px; color: #2ecc71;">Level Cleared! 🎉</h2>
-            <button id="action-btn" onclick="nextLevel()">Next Level</button>
+            <button class="action-btn" id="action-btn" onclick="nextLevel()">Next Level</button>
         </div>
     </div>
 
@@ -140,7 +181,7 @@
         
         let currentLevel = 0;
 
-        // Yahan humne 3 alag-alag aur majedar levels ki data banayi hai
+        // Upgraded Level configurations with safer spacing coordinates
         const ALL_LEVELS = [
             // Level 1
             [
@@ -149,22 +190,22 @@
                 { id: "a3", dir: "D", path: "M 180 180 L 260 180 L 260 300" },
                 { id: "a4", dir: "L", path: "M 300 390 L 60 390" }
             ],
-            // Level 2 (Thoda zyada arrows aur criss-cross)
+            // Level 2 (Fixed & Corrected Layout)
             [
-                { id: "b1", dir: "U", path: "M 60 400 L 60 100" },
-                { id: "b2", dir: "R", path: "M 40 200 L 300 200" },
-                { id: "b3", dir: "L", path: "M 320 140 L 120 140" },
-                { id: "b4", dir: "D", path: "M 220 80 L 220 360" },
-                { id: "b5", dir: "R", path: "M 100 300 L 280 300" }
+                { id: "b1", dir: "U", path: "M 70 420 L 70 140" },
+                { id: "b2", dir: "R", path: "M 50 250 L 310 250" },
+                { id: "b3", dir: "L", path: "M 310 180 L 130 180" },
+                { id: "b4", dir: "D", path: "M 230 100 L 230 350" },
+                { id: "b5", dir: "R", path: "M 110 320 L 290 320" }
             ],
-            // Level 3 (Zig-Zag loops)
+            // Level 3
             [
                 { id: "c1", dir: "R", path: "M 40 100 L 320 100" },
-                { id: "c2", dir: "D", path: "M 80 60 L 80 240 L 200 240" },
-                { id: "c3", dir: "L", path: "M 280 180 L 140 180" },
-                { id: "c4", dir: "U", path: "M 160 420 L 160 300" },
-                { id: "c5", dir: "D", path: "M 260 140 L 260 400" },
-                { id: "c6", dir: "L", path: "M 320 350 L 60 350" }
+                { id: "c2", dir: "D", path: "M 80 60 L 80 220 L 200 220" },
+                { id: "c3", dir: "L", path: "M 290 160 L 140 160" },
+                { id: "c4", dir: "U", path: "M 160 420 L 160 290" },
+                { id: "c5", dir: "D", path: "M 270 140 L 270 400" },
+                { id: "c6", dir: "L", path: "M 320 360 L 60 360" }
             ]
         ];
 
@@ -197,11 +238,12 @@
         function isColliding(path1, path2) {
             const len1 = path1.getTotalLength();
             const len2 = path2.getTotalLength();
-            for (let i = 0; i <= len1; i += 6) {
+            // High-precision geometric sweep check
+            for (let i = 0; i <= len1; i += 4) {
                 const pt1 = path1.getPointAtLength(i);
-                for (let j = 0; j <= len2; j += 6) {
+                for (let j = 0; j <= len2; j += 4) {
                     const pt2 = path2.getPointAtLength(j);
-                    if (Math.abs(pt1.x - pt2.x) < 10 && Math.abs(pt1.y - pt2.y) < 10) {
+                    if (Math.abs(pt1.x - pt2.x) < 8 && Math.abs(pt1.y - pt2.y) < 8) {
                         return true;
                     }
                 }
@@ -209,17 +251,14 @@
             return false;
         }
 
-        function handleArrowClick(clickedGroup) {
-            if (!clickedGroup || !clickedGroup.classList.contains('arrow-group')) return;
-
-            const direction = clickedGroup.getAttribute('data-dir');
-            const mainLine = clickedGroup.querySelector('.arrow-line');
+        function checkEscapePossibility(group) {
+            const direction = group.getAttribute('data-dir');
+            const mainLine = group.querySelector('.arrow-line');
             
             const ghostPath = mainLine.cloneNode(true);
             svg.appendChild(ghostPath);
 
-            let translationX = 0;
-            let translationY = 0;
+            let translationX = 0, translationY = 0;
             if (direction === 'R') translationX = BOARD_WIDTH;
             if (direction === 'L') translationX = -BOARD_WIDTH;
             if (direction === 'U') translationY = -BOARD_HEIGHT;
@@ -227,7 +266,7 @@
 
             ghostPath.setAttribute('transform', `translate(${translationX}, ${translationY})`);
 
-            const otherGroups = Array.from(document.querySelectorAll('.arrow-group')).filter(g => g !== clickedGroup);
+            const otherGroups = Array.from(document.querySelectorAll('.arrow-group')).filter(g => g !== group);
             let isBlocked = false;
 
             for (let other of otherGroups) {
@@ -239,22 +278,48 @@
             }
 
             ghostPath.remove();
+            return { isBlocked, translationX, translationY };
+        }
 
-            if (!isBlocked) {
-                clickedGroup.style.transform = `translate(${translationX}px, ${translationY}px)`;
+        function handleArrowClick(clickedGroup) {
+            if (!clickedGroup || !clickedGroup.classList.contains('arrow-group')) return;
+
+            const assessment = checkEscapePossibility(clickedGroup);
+
+            if (!assessment.isBlocked) {
+                clickedGroup.style.transform = `translate(${assessment.translationX}px, ${assessment.translationY}px)`;
                 clickedGroup.style.opacity = '0';
+                clickedGroup.style.pointerEvents = 'none';
                 setTimeout(() => {
                     clickedGroup.remove();
                     checkWin();
                 }, 400);
             } else {
+                // Shake feedback
                 clickedGroup.style.transform = 'translate(8px, 0px)';
                 setTimeout(() => clickedGroup.style.transform = 'translate(-8px, 0px)', 60);
                 setTimeout(() => clickedGroup.style.transform = 'translate(0px, 0px)', 120);
             }
         }
 
-        // Event Listeners for Touch & Click
+        // Hint System Logic
+        function showHint() {
+            const groups = Array.from(document.querySelectorAll('.arrow-group'));
+            for (let group of groups) {
+                const check = checkEscapePossibility(group);
+                if (!check.isBlocked) {
+                    group.classList.add('hint-active');
+                    setTimeout(() => group.classList.remove('hint-active'), 1600);
+                    return; 
+                }
+            }
+        }
+
+        function resetCurrentLevel() {
+            loadLevel(currentLevel);
+        }
+
+        // Touch & Click Listeners
         svg.addEventListener('touchstart', (e) => {
             e.preventDefault();
             const group = e.target.closest('.arrow-group');
@@ -289,7 +354,7 @@
             }
         }
 
-        // Initialize First Level
+        // Start Game
         loadLevel(currentLevel);
     </script>
 </body>
