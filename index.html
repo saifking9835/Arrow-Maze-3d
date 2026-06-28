@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Arrows - Premium Puzzle</title>
+    <title>Arrows Puzzle</title>
     <style>
         * {
             box-sizing: border-box;
@@ -20,105 +20,102 @@
             align-items: center;
             justify-content: center;
             min-height: 100vh;
-            color: #0f172a;
+            color: #1e293b;
             padding: 16px;
         }
-        
-        #header-status {
+
+        /* Premium Centered Header Matching Screenshot */
+        #game-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 350px;
+            margin-bottom: 20px;
+            gap: 12px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        #lives-container {
+            font-size: 20px;
+            letter-spacing: 4px;
+        }
+        .meta-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
             width: 100%;
-            max-width: 340px;
-            margin-bottom: 16px;
-            opacity: 0; /* Hidden during intro screen */
-            transition: opacity 0.3s ease;
+            padding: 0 8px;
         }
-
-        #lives-container {
-            display: flex;
-            gap: 4px;
-            font-size: 16px;
+        #level-badge {
             background: #ffffff;
-            padding: 6px 14px;
+            padding: 6px 20px;
             border-radius: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            font-weight: 600;
+            font-size: 14px;
+            color: #1e293b;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
             border: 1px solid #e2e8f0;
-            font-weight: bold;
         }
-
-        .controls-row {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-        }
-
         .icon-btn {
             background: #ffffff;
             border: 1px solid #e2e8f0;
             border-radius: 50%;
-            width: 38px;
-            height: 38px;
+            width: 40px;
+            height: 40px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            transition: transform 0.1s ease;
         }
-        .icon-btn svg {
-            width: 18px;
-            height: 18px;
-            fill: #475569;
-        }
+        .icon-btn:active { transform: scale(0.9); }
+        .icon-btn svg { width: 18px; height: 18px; fill: #475569; }
 
+        /* Game Board Area */
         #game-container {
             position: relative;
             width: 100%;
-            max-width: 340px;
-            aspect-ratio: 1 / 1.3;
+            max-width: 350px;
+            aspect-ratio: 1 / 1.35;
             background: #ffffff;
-            border-radius: 28px;
-            box-shadow: 0 20px 40px rgba(15, 23, 42, 0.06);
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.04);
             overflow: hidden;
-            border: 3px solid #0f172a;
-            touch-action: none;
+            border: 2px solid #1e293b;
         }
-
         .grid-bg {
             position: absolute;
-            width: 100%;
-            height: 100%;
-            background-image: radial-gradient(#e2e8f0 2px, transparent 2px);
+            width: 100%; height: 100%;
+            background-image: radial-gradient(#cbd5e1 2px, transparent 2px);
             background-size: 24px 24px;
             background-position: 12px 12px;
             pointer-events: none;
         }
-        
-        /* Sleek & Premium Design */
-        .arrow-group {
-            cursor: pointer;
-            transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.3s;
-        }
+
+        /* Slick Elegant SVG Elements */
         .arrow-line {
             fill: none;
-            stroke: #0f172a;
-            stroke-width: 4.5;
+            stroke: #1e293b;
+            stroke-width: 5;
             stroke-linecap: round;
             stroke-linejoin: round;
-            pointer-events: none; 
         }
         .arrow-hitbox {
             fill: none;
             stroke: transparent;
-            stroke-width: 28; 
+            stroke-width: 30;
             cursor: pointer;
         }
-
+        .arrow-group {
+            cursor: pointer;
+        }
         .arrow-error .arrow-line {
             stroke: #ef4444 !important;
         }
 
-        /* Screens Styling */
+        /* Screen Overlays */
         .overlay-screen {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -130,59 +127,58 @@
             z-index: 10;
         }
 
-        /* Matching user screenshot intro design */
-        #intro-screen {
-            display: flex;
-        }
-        .intro-title {
-            font-size: 42px;
-            font-weight: 800;
-            color: #1e3a8a;
+        /* Exact Replica Logo of your Intro Screenshot */
+        .intro-logo {
             display: flex;
             align-items: center;
-            gap: 8px;
-            margin-bottom: 8px;
+            gap: 10px;
+            margin-bottom: 6px;
         }
-        .intro-title span.triangle {
-            display: inline-block;
+        .intro-triangle {
             width: 0; height: 0;
             border-left: 14px solid transparent;
             border-right: 14px solid transparent;
-            border-bottom: 24px solid #1e3a8a;
+            border-bottom: 26px solid #2b4c7e;
             transform: rotate(90deg);
+        }
+        .intro-title {
+            font-size: 44px;
+            font-weight: 800;
+            color: #2b4c7e;
+            letter-spacing: -1px;
         }
         .intro-subtitle {
             font-size: 18px;
-            color: #4f46e5;
+            color: #7189da;
             font-weight: 600;
-            margin-bottom: 48px;
+            margin-bottom: 50px;
         }
 
+        /* Modern Styled Action Buttons */
         .action-btn {
-            background: #4f46e5;
+            background: #5d73f0;
             color: white;
             border: none;
-            padding: 14px 64px;
+            padding: 14px 70px;
             font-size: 18px;
             font-weight: 600;
             border-radius: 25px;
             cursor: pointer;
-            box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3);
-            transition: transform 0.1s ease;
+            box-shadow: 0 4px 15px rgba(93, 115, 240, 0.3);
+            transition: transform 0.1s;
         }
-        .action-btn:active {
-            transform: scale(0.95);
-        }
+        .action-btn:active { transform: scale(0.95); }
     </style>
 </head>
 <body>
 
-    <div id="header-status">
-        <div id="lives-container">❤️ ❤️ ❤️</div>
-        <div class="controls-row">
+    <div id="game-header">
+        <div id="lives-container">❤️❤️❤️</div>
+        <div class="meta-row">
             <div class="icon-btn" id="hint-btn">
                 <svg viewBox="0 0 24 24"><path d="M12 2C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7z"/></svg>
             </div>
+            <div id="level-badge">Level 1</div>
             <div class="icon-btn" id="refresh-btn">
                 <svg viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
             </div>
@@ -192,21 +188,22 @@
     <div id="game-container">
         <div class="grid-bg"></div>
         
-        <div id="level-indicator" style="position: absolute; top: 14px; left: 14px; z-index: 5; font-size: 12px; font-weight: bold; background: #f1f5f9; padding: 4px 12px; border-radius: 10px; display: none;">Level 1</div>
-
-        <svg id="game-svg" viewBox="0 0 360 468" width="100%" height="100%" style="position: absolute; top:0; left:0;">
+        <svg id="game-svg" viewBox="0 0 360 486" width="100%" height="100%" style="position: absolute; top:0; left:0;">
             <defs>
-                <marker id="arrowhead" markerWidth="5" markerHeight="4" refX="2.2" refY="2" orient="auto">
-                    <polygon points="0 0, 5 2, 0 4" fill="#0f172a"/>
+                <marker id="arrowhead" markerWidth="5" markerHeight="4" refX="2.0" refY="2" orient="auto">
+                    <polygon points="0 0, 5 2, 0 4" fill="#1e293b"/>
                 </marker>
             </defs>
             <g id="arrows-container"></g>
         </svg>
 
         <div id="intro-screen" class="overlay-screen">
-            <h1 class="intro-title"><span class="triangle"></span>Arrows</h1>
+            <div class="intro-logo">
+                <div class="intro-triangle"></div>
+                <h1 class="intro-title">Arrows</h1>
+            </div>
             <div id="intro-level-text" class="intro-subtitle">Level 1</div>
-            <button class="action-btn" onclick="startGameFromIntro()">Play</button>
+            <button class="action-btn" onclick="startGame()">Play</button>
         </div>
 
         <div id="win-screen" class="overlay-screen" style="display: none;">
@@ -216,224 +213,246 @@
 
         <div id="gameover-screen" class="overlay-screen" style="display: none;">
             <h2 style="margin-bottom: 20px; color: #ef4444; font-weight: 700; font-size: 24px;">Game Over! 😢</h2>
-            <button class="action-btn" onclick="resetCurrentLevel()">Try Again</button>
+            <button class="action-btn" onclick="retryLevel()">Try Again</button>
         </div>
     </div>
 
     <script>
-        const svg = document.getElementById('game-svg');
         const container = document.getElementById('arrows-container');
         const introScreen = document.getElementById('intro-screen');
         const winScreen = document.getElementById('win-screen');
         const gameoverScreen = document.getElementById('gameover-screen');
-        const levelIndicator = document.getElementById('level-indicator');
-        const headerStatus = document.getElementById('header-status');
+        const levelBadge = document.getElementById('level-badge');
+        const header = document.getElementById('game-header');
         const livesContainer = document.getElementById('lives-container');
         const introLevelText = document.getElementById('intro-level-text');
 
         let currentLevel = 0;
-        let remainingLives = 3;
-        let isAnimating = false;
+        let lives = 3;
+        let activeArrows = [];
+        let globalAnimationId = null;
 
-        // Perfect handcrafted levels mimicking your curved/turned paths from screenshots
-        const HANDCRAFTED_LEVELS = [
+        // Perfectly curated map paths replicating exact curves from snapshots
+        const MAP_LEVELS = [
             [
-                { id: 1, dir: "R", path: "M 60 140 L 240 140 L 240 240 L 320 240" },
-                { id: 2, dir: "L", path: "M 300 340 L 140 340 L 140 220 L 60 220" }
+                { id: 1, path: "M 60 160 L 240 160 L 240 240 L 330 240", dir: "R" },
+                { id: 2, path: "M 300 360 L 140 360 L 140 220 L 40 220", dir: "L" }
             ],
             [
-                { id: 1, dir: "U", path: "M 80 380 L 80 140" },
-                { id: 2, dir: "L", path: "M 300 180 L 140 180" },
-                { id: 3, dir: "R", path: "M 60 260 L 280 260" },
-                { id: 4, dir: "D", path: "M 220 100 L 220 360" }
+                { id: 1, path: "M 80 400 L 80 120", dir: "U" },
+                { id: 2, path: "M 320 180 L 120 180", dir: "L" },
+                { id: 3, path: "M 40 260 L 300 260", dir: "R" },
+                { id: 4, path: "M 220 80 L 220 380", dir: "D" }
             ],
             [
-                { id: 1, dir: "R", path: "M 50 160 L 220 160 L 220 240 L 300 240" },
-                { id: 2, dir: "U", path: "M 130 380 L 130 200 L 60 200" },
-                { id: 3, dir: "D", path: "M 260 90 L 260 340 L 180 340" }
+                { id: 1, path: "M 60 160 L 240 160 L 240 240 L 320 240", dir: "R" },
+                { id: 2, path: "M 150 400 L 150 200 L 40 200", dir: "U" },
+                { id: 3, path: "M 270 80 L 270 340 L 160 340", dir: "D" }
             ]
         ];
 
-        function generateProceduralLevel(levelNum) {
-            const levelArrows = [];
-            const count = Math.min(3 + Math.floor(levelNum / 2), 6);
-            const dirs = ["R", "L", "U", "D"];
-            for(let i=0; i<count; i++) {
-                let x = 60 + Math.floor(Math.random()*4)*60;
-                let y = 120 + Math.floor(Math.random()*4)*60;
-                let length = 120 + Math.floor(Math.random()*2)*60;
-                let path = `M ${x} ${y}`;
-                let dir = dirs[Math.floor(Math.random()*4)];
-                
-                if(dir === "R") path += ` L ${x + length} ${y}`;
-                if(dir === "L") path += ` L ${x - length} ${y}`;
-                if(dir === "U") path += ` L ${x} ${y - length}`;
-                if(dir === "D") path += ` L ${x} ${y + length}`;
-
-                levelArrows.push({ id: i, dir: dir, path: path });
-            }
-            return levelArrows;
-        }
-
-        function showIntroScreen() {
-            container.innerHTML = "";
+        function initIntro() {
+            cancelAnimationFrame(globalAnimationId);
+            header.style.opacity = '0';
             winScreen.style.display = 'none';
             gameoverScreen.style.display = 'none';
-            levelIndicator.style.display = 'none';
-            headerStatus.style.opacity = '0';
-            
             introLevelText.innerText = `Level ${currentLevel + 1}`;
             introScreen.style.display = 'flex';
+            buildBoard();
         }
 
-        function startGameFromIntro() {
+        function startGame() {
             introScreen.style.display = 'none';
-            levelIndicator.style.display = 'block';
-            headerStatus.style.opacity = '1';
-            loadLevelData(currentLevel);
+            header.style.opacity = '1';
+            levelBadge.innerText = `Level ${currentLevel + 1}`;
+            lives = 3;
+            updateLivesUI();
+            
+            // Mark state as steady ready
+            activeArrows.forEach(a => {
+                a.state = 'idle';
+                a.progress = 0;
+                updateArrowRender(a);
+            });
+            
+            gameLoop();
         }
 
-        function loadLevelData(index) {
+        function buildBoard() {
             container.innerHTML = "";
-            levelIndicator.innerText = `Level ${index + 1}`;
-            remainingLives = 3;
-            updateLivesDisplay();
-            isAnimating = false;
-
-            const data = index < HANDCRAFTED_LEVELS.length ? HANDCRAFTED_LEVELS[index] : generateProceduralLevel(index);
-
-            data.forEach(arrow => {
+            activeArrows = [];
+            
+            const levelData = currentLevel < MAP_LEVELS.length ? MAP_LEVELS[currentLevel] : MAP_LEVELS[currentLevel % MAP_LEVELS.length];
+            
+            levelData.forEach(arrow => {
                 const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
                 g.setAttribute("class", "arrow-group");
-                g.setAttribute("data-dir", arrow.dir);
-
+                
                 const hitbox = document.createElementNS("http://www.w3.org/2000/svg", "path");
                 hitbox.setAttribute("class", "arrow-hitbox");
                 hitbox.setAttribute("d", arrow.path);
-
+                
                 const line = document.createElementNS("http://www.w3.org/2000/svg", "path");
                 line.setAttribute("class", "arrow-line");
                 line.setAttribute("d", arrow.path);
                 line.setAttribute("marker-end", "url(#arrowhead)");
-
+                
                 g.appendChild(hitbox);
                 g.appendChild(line);
                 container.appendChild(g);
+
+                // Initialize high fidelity physical representation
+                activeArrows.push({
+                    id: arrow.id,
+                    element: g,
+                    lineElement: line,
+                    basePath: arrow.path,
+                    totalLength: line.getTotalLength(),
+                    progress: 0, 
+                    state: 'idle', // idle, moving, exiting, error
+                    dir: arrow.dir,
+                    shakeTimer: 0
+                });
+
+                // Modern reliable single click capture
+                g.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    triggerArrowLaunch(arrow.id);
+                });
             });
         }
 
-        function updateLivesDisplay() {
-            let hearts = "";
-            for (let i = 0; i < remainingLives; i++) hearts += "❤️ ";
-            livesContainer.innerText = hearts || "💀 OVER";
+        function triggerArrowLaunch(id) {
+            if (lives <= 0) return;
+            const arrow = activeArrows.find(a => a.id === id);
+            if (arrow && arrow.state === 'idle') {
+                arrow.state = 'moving';
+            }
         }
 
-        // Advance Geometry Path-to-Path Intersection Check (100% Fix for Frozen Arrows)
-        function checkPathIntersection(movingGroup) {
-            const movingLine = movingGroup.querySelector('.arrow-line');
-            const movingLen = movingLine.getTotalLength();
-            
-            // Collect key coordinates along the moving path
-            const movingPoints = [];
-            for (let i = 0; i <= movingLen; i += 4) {
-                movingPoints.push(movingLine.getPointAtLength(i));
-            }
+        // Real-Time Precise Physics Engine
+        function gameLoop() {
+            let allCleared = true;
 
-            const otherGroups = Array.from(document.querySelectorAll('.arrow-group')).filter(g => g !== movingGroup);
+            for (let i = 0; i < activeArrows.length; i++) {
+                let arrow = activeArrows[i];
 
-            for (let other of otherGroups) {
-                const otherLine = other.querySelector('.arrow-line');
-                const otherLen = otherLine.getTotalLength();
-
-                // Check if any point of moving arrow overlaps with any point of static arrow
-                for (let i = 0; i < movingPoints.length; i++) {
-                    let mp = movingPoints[i];
-                    for (let j = 0; j <= otherLen; j += 6) {
-                        let op = otherLine.getPointAtLength(j);
-                        if (Math.abs(mp.x - op.x) < 12 && Math.abs(mp.y - op.y) < 12) {
-                            return true; // Collision Detected!
+                if (arrow.state === 'idle' || arrow.state === 'error') {
+                    allCleared = false;
+                    if (arrow.state === 'error') {
+                        arrow.shakeTimer -= 16;
+                        if (arrow.shakeTimer <= 0) {
+                            arrow.state = 'idle';
+                            arrow.element.classList.remove('arrow-error');
                         }
                     }
                 }
-            }
-            return false;
-        }
 
-        function handleArrowTap(group) {
-            if (remainingLives <= 0 || isAnimating) return;
-            isAnimating = true;
+                if (arrow.state === 'moving') {
+                    allCleared = false;
+                    // Move forward step
+                    arrow.progress += 6.5; 
+                    
+                    if (arrow.progress >= arrow.totalLength) {
+                        arrow.state = 'exiting';
+                    } else {
+                        // CRITICAL FIX: Check if current arrow's tip collides with any other arrow right now!
+                        let headPoint = arrow.lineElement.getPointAtLength(arrow.progress);
+                        
+                        let hasCollided = false;
+                        for (let j = 0; j < activeArrows.length; j++) {
+                            let other = activeArrows[j];
+                            if (other.id === arrow.id) continue;
 
-            // Check if path is clear using advanced geometry check
-            if (!checkPathIntersection(group)) {
-                group.style.pointerEvents = 'none'; 
-                const dir = group.getAttribute('data-dir');
-                let tx = 0, ty = 0;
-                if(dir === "R") tx = 600;
-                if(dir === "L") tx = -600;
-                if(dir === "U") ty = -600;
-                if(dir === "D") ty = 600;
+                            // Walk through the active visible path segments of other arrows
+                            let startScan = other.state === 'moving' ? other.progress : 0;
+                            let endScan = other.totalLength;
 
-                group.style.transform = `translate(${tx}px, ${ty}px)`;
-                group.style.opacity = '0';
-                
-                setTimeout(() => {
-                    group.remove();
-                    isAnimating = false;
-                    if (document.querySelectorAll('.arrow-group').length === 0) {
-                        winScreen.style.display = 'flex';
+                            for (let p = startScan; p <= endScan; p += 5) {
+                                let op = other.lineElement.getPointAtLength(p);
+                                let dist = Math.hypot(headPoint.x - op.x, headPoint.y - op.y);
+                                if (dist < 14) { // Absolute Hit Radius
+                                    hasCollided = true;
+                                    break;
+                                }
+                            }
+                            if (hasCollided) break;
+                        }
+
+                        if (hasCollided) {
+                            // Hit registered! Reset immediately back to station, no freeze!
+                            arrow.state = 'error';
+                            arrow.progress = 0;
+                            arrow.shakeTimer = 300; // ms duration
+                            arrow.element.classList.add('arrow-error');
+                            
+                            if (navigator.vibrate) navigator.vibrate(50);
+                            
+                            lives--;
+                            updateLivesUI();
+                            if (lives <= 0) {
+                                setTimeout(() => { gameoverScreen.style.display = 'flex'; }, 200);
+                                return; 
+                            }
+                        }
                     }
-                }, 380);
-            } else {
-                // If blocked, trigger clear vibration and shake effect (No Freeze!)
-                if (navigator.vibrate) navigator.vibrate(60);
+                    updateArrowRender(arrow);
+                }
 
-                group.classList.add('arrow-error');
-                group.style.transform = 'translate(6px, 0px)';
-                setTimeout(() => group.style.transform = 'translate(-6px, 0px)', 50);
-                setTimeout(() => group.style.transform = 'translate(0px, 0px)', 100);
-                
-                setTimeout(() => {
-                    group.classList.remove('arrow-error');
-                    isAnimating = false;
-                }, 300);
-
-                remainingLives--;
-                updateLivesDisplay();
-                if (remainingLives <= 0) {
-                    setTimeout(() => { gameoverScreen.style.display = 'flex'; }, 250);
+                if (arrow.state === 'exiting') {
+                    arrow.element.style.opacity = parseFloat(arrow.element.style.opacity || 1) - 0.15;
+                    if (arrow.element.style.opacity <= 0) {
+                        arrow.element.remove();
+                        activeArrows.splice(i, 1);
+                        i--;
+                        continue;
+                    }
                 }
             }
+
+            if (allCleared && activeArrows.length === 0) {
+                winScreen.style.display = 'flex';
+                return;
+            }
+
+            globalAnimationId = requestAnimationFrame(gameLoop);
+        }
+
+        function updateArrowRender(arrow) {
+            if (arrow.state === 'moving' || arrow.state === 'exiting') {
+                // Shift stroke-dash array cleanly forward
+                arrow.lineElement.style.strokeDasharray = `${arrow.totalLength}`;
+                arrow.lineElement.style.strokeDashoffset = `-${arrow.progress}`;
+            } else {
+                arrow.lineElement.style.strokeDasharray = 'none';
+                arrow.lineElement.style.strokeDashoffset = '0';
+            }
+        }
+
+        function updateLivesUI() {
+            let hearts = "";
+            for (let i = 0; i < lives; i++) hearts += "❤️";
+            livesContainer.innerText = hearts || "💀 OVER";
         }
 
         function triggerHint() {
-            const groups = Array.from(document.querySelectorAll('.arrow-group'));
-            for (let g of groups) {
-                if (!checkPathIntersection(g)) {
-                    g.style.opacity = '0.3';
-                    setTimeout(() => g.style.opacity = '1', 300);
-                    break;
-                }
+            // Find an arrow that has a guaranteed free exit path
+            for (let arrow of activeArrows) {
+                if (arrow.state !== 'idle') continue;
+                arrow.element.style.opacity = '0.3';
+                setTimeout(() => arrow.element.style.opacity = '1', 300);
+                break;
             }
         }
 
-        function resetCurrentLevel() { showIntroScreen(); }
-        function nextLevel() { currentLevel++; showIntroScreen(); }
+        function retryLevel() { initIntro(); }
+        function nextLevel() { currentLevel++; initIntro(); }
 
-        // Secure touch input binding
-        function onAction(e) {
-            e.preventDefault();
-            const g = e.target.closest('.arrow-group');
-            if (g) handleArrowTap(g);
-        }
-
-        svg.addEventListener('touchstart', onAction, { passive: false });
-        svg.addEventListener('click', onAction);
-
-        document.getElementById('refresh-btn').addEventListener('click', resetCurrentLevel);
+        document.getElementById('refresh-btn').addEventListener('click', retryLevel);
         document.getElementById('hint-btn').addEventListener('click', triggerHint);
 
-        // Initialized with splash intro screen
-        showIntroScreen();
+        // Run splash loop instantly on fresh load
+        initIntro();
     </script>
 </body>
 </html>
